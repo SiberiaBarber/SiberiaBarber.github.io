@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="第一篇博客，总结下最近学习的Redis知识。#一、Redis的五大对象Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。 #二、Redis的底层数据结构了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态">
+<meta name="description" content="第一篇博客，总结下最近学习的Redis知识。 一、Redis的五大对象Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。 二、Redis的底层数据结构了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态字">
 <meta name="keywords" content="Redis Learning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis五大对象及基本数据结构">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;10&#x2F;20&#x2F;Redis%E4%BA%94%E5%A4%A7%E5%AF%B9%E8%B1%A1%E5%8F%8A%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84&#x2F;index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="第一篇博客，总结下最近学习的Redis知识。#一、Redis的五大对象Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。 #二、Redis的底层数据结构了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态">
+<meta property="og:description" content="第一篇博客，总结下最近学习的Redis知识。 一、Redis的五大对象Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。 二、Redis的底层数据结构了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态字">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-10-20T13:48:45.085Z">
+<meta property="og:updated_time" content="2019-10-20T13:54:12.333Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -298,10 +298,13 @@
       
 
       
-        <p>  第一篇博客，总结下最近学习的Redis知识。<br>#一、Redis的五大对象<br>Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。</p>
-<p>#二、Redis的底层数据结构<br>了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态字符串、链表、字典、跳跃表、整数集合、压缩列表等，这些数据结构组成了五大对象。下面逐一进行介绍。<br>##简单动态字符串<br>Redis的源代码是用C写的，但是C里面的字符串功能不够强大，因此Redis自己构建了一种名为简单动态字符串（Simple Dynamic String, SDS）的抽象类型。<br>###2.1 SDS的定义<br>每个sds.h/sdshdr表示一个SDS值，如下所示。</p>
+        <p>  第一篇博客，总结下最近学习的Redis知识。</p>
+<h1 id="一、Redis的五大对象"><a href="#一、Redis的五大对象" class="headerlink" title="一、Redis的五大对象"></a>一、Redis的五大对象</h1><p>Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。</p>
+<h1 id="二、Redis的底层数据结构"><a href="#二、Redis的底层数据结构" class="headerlink" title="二、Redis的底层数据结构"></a>二、Redis的底层数据结构</h1><p>了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态字符串、链表、字典、跳跃表、整数集合、压缩列表等，这些数据结构组成了五大对象。下面逐一进行介绍。</p>
+<h2 id="简单动态字符串"><a href="#简单动态字符串" class="headerlink" title="简单动态字符串"></a>简单动态字符串</h2><p>Redis的源代码是用C写的，但是C里面的字符串功能不够强大，因此Redis自己构建了一种名为简单动态字符串（Simple Dynamic String, SDS）的抽象类型。</p>
+<h3 id="2-1-SDS的定义"><a href="#2-1-SDS的定义" class="headerlink" title="2.1 SDS的定义"></a>2.1 SDS的定义</h3><p>每个sds.h/sdshdr表示一个SDS值，如下所示。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//记录buf数组中已经使用的字节数量</span></span><br><span class="line"><span class="keyword">int</span> len;</span><br><span class="line"></span><br><span class="line"><span class="comment">//buf数据中未使用的字节数量</span></span><br><span class="line"><span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//字节数组，用来保存字符串 </span></span><br><span class="line"><span class="keyword">char</span> buf[];</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>###2.2 SDS的优点<br>相较于C中的字符串，SDS有以下优点： </p>
+<h3 id="2-2-SDS的优点"><a href="#2-2-SDS的优点" class="headerlink" title="2.2 SDS的优点"></a>2.2 SDS的优点</h3><p>相较于C中的字符串，SDS有以下优点： </p>
 <ol>
 <li>获取字符串长度时间复杂度为O(1),直接访问len属性；C中字符串复杂度为O(N),需要遍历整个字符串；</li>
 <li>避免缓冲区溢出：当SDS拼接字符串时，假如SDS的空间不够，SDS会先扩大字符串的空间，然后再进行拼接；</li>
@@ -475,7 +478,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#三、链表"><span class="nav-number">1.</span> <span class="nav-text">三、链表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、字典"><span class="nav-number">2.</span> <span class="nav-text">四、字典</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、跳跃表"><span class="nav-number">3.</span> <span class="nav-text">五、跳跃表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、整数集合"><span class="nav-number">4.</span> <span class="nav-text">六、整数集合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、压缩列表"><span class="nav-number">5.</span> <span class="nav-text">七、压缩列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、对象"><span class="nav-number">6.</span> <span class="nav-text">八、对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1、对象类型与编码"><span class="nav-number">6.1.</span> <span class="nav-text">8.1、对象类型与编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-2-字符串对象"><span class="nav-number">6.2.</span> <span class="nav-text">8.2 字符串对象</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、Redis的五大对象"><span class="nav-number">1.</span> <span class="nav-text">一、Redis的五大对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Redis的底层数据结构"><span class="nav-number">2.</span> <span class="nav-text">二、Redis的底层数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单动态字符串"><span class="nav-number">2.1.</span> <span class="nav-text">简单动态字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-SDS的定义"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1 SDS的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-SDS的优点"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.2 SDS的优点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、链表"><span class="nav-number">3.</span> <span class="nav-text">三、链表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、字典"><span class="nav-number">4.</span> <span class="nav-text">四、字典</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、跳跃表"><span class="nav-number">5.</span> <span class="nav-text">五、跳跃表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、整数集合"><span class="nav-number">6.</span> <span class="nav-text">六、整数集合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、压缩列表"><span class="nav-number">7.</span> <span class="nav-text">七、压缩列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、对象"><span class="nav-number">8.</span> <span class="nav-text">八、对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1、对象类型与编码"><span class="nav-number">8.1.</span> <span class="nav-text">8.1、对象类型与编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-2-字符串对象"><span class="nav-number">8.2.</span> <span class="nav-text">8.2 字符串对象</span></a></li></ol></li></ol></div>
             
 
           </div>

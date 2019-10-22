@@ -313,11 +313,110 @@
 <li>二进制安全；</li>
 <li>可以使用一些C语言的字符串函数。</li>
 </ol>
-<h1 id="三、链表"><a href="#三、链表" class="headerlink" title="三、链表"></a>三、链表</h1><h1 id="四、字典"><a href="#四、字典" class="headerlink" title="四、字典"></a>四、字典</h1><h1 id="五、跳跃表"><a href="#五、跳跃表" class="headerlink" title="五、跳跃表"></a>五、跳跃表</h1><h1 id="六、整数集合"><a href="#六、整数集合" class="headerlink" title="六、整数集合"></a>六、整数集合</h1><h1 id="七、压缩列表"><a href="#七、压缩列表" class="headerlink" title="七、压缩列表"></a>七、压缩列表</h1><h1 id="八、对象"><a href="#八、对象" class="headerlink" title="八、对象"></a>八、对象</h1><p>介绍完Redis常用的数据结构之后，对象就可以正式登场啦。Redis的对象包括：字符串对象、列表对象、哈希对象、集合对象以及有序集合对象，每种对象至少用到了一种之前提到的数据结构。此外，Redis还支持指定对象的底层数据结构实现，以满足不同场景的需求。</p>
+<h1 id="三、链表"><a href="#三、链表" class="headerlink" title="三、链表"></a>三、链表</h1><h2 id="3-1-链表节点"><a href="#3-1-链表节点" class="headerlink" title="3.1 链表节点"></a>3.1 链表节点</h2><p>每个链表节点可以用adlist.h/listNode结构来表示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct listNode&#123;</span><br><span class="line">//前置节点</span><br><span class="line">struct listNode *prev;</span><br><span class="line"></span><br><span class="line">//后置节点</span><br><span class="line">struct listNode *next;</span><br><span class="line"></span><br><span class="line">//节点的值</span><br><span class="line">void * value;</span><br><span class="line">&#125;listNode;</span><br></pre></td></tr></table></figure>
+<p>多个listNode组成了链表，并且由list节点来持有。该list节点为链表提供了表头指针head、表尾指针tail以及链表长度计数器len，并且存在dup、free和match函数对节点进行复制、释放、对比节点值等操作。由于链表表头节点的前置节点和表尾的后置节点都指向null，所以Redis的链表是无环链表。</p>
+<h1 id="四、字典"><a href="#四、字典" class="headerlink" title="四、字典"></a>四、字典</h1><p>字典中，一个键（key）和一个值（value）进行关联，关联的键和值就是键值对。字典中的每个键都是独一无二的。</p>
+<h2 id="4-1-哈希表和字典"><a href="#4-1-哈希表和字典" class="headerlink" title="4.1 哈希表和字典"></a>4.1 哈希表和字典</h2><p>Redis的字典是使用哈希表实现的，一个哈希表中有多个哈希节点，每个哈希表节点保存了字典中的一个键值对。哈希表的结构定义是。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">type struct dicht&#123;</span><br><span class="line">//哈希表数组</span><br><span class="line">dictEntry **table;</span><br><span class="line"></span><br><span class="line">//哈希表大小;</span><br><span class="line">unsigned long size;</span><br><span class="line"></span><br><span class="line">//哈希表掩码大小，等于size-1</span><br><span class="line">unsigned long sizeMask;</span><br><span class="line"></span><br><span class="line">//该哈希表已有的节点数量</span><br><span class="line">unsigned long used;</span><br><span class="line">&#125;dicht;</span><br></pre></td></tr></table></figure>
+<p>table属性书一个数组，数组中每个元素都保存了一个指向dict.h/dictEntry结构的指针，每个dictEntry结构都保存了一个键值对。size记录了哈希表的大小，也就是table数组的大小。<br>哈希表的节点用dictEntry结构表示，每个dictEntry结构都保存了一个键值对。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">typedef struct dictEntry&#123;</span><br><span class="line">//键 </span><br><span class="line">void *key;</span><br><span class="line">//值</span><br><span class="line">union&#123;</span><br><span class="line"> void *val;</span><br><span class="line"> unit64_tu64;</span><br><span class="line"> int64_ts64;</span><br><span class="line">&#125; v;</span><br><span class="line">//指向下个哈希表节点，形成链表</span><br><span class="line">struct dictEntry *next;</span><br><span class="line">&#125; dictEntry;</span><br></pre></td></tr></table></figure>
+<p>字典的结构如下。type属性和private属性针对不同类型的键值对，为创建多态字典而生。ht是包含两个数组的属性，一般只使用ht[0],h[1]只在rehash时使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct dict &#123;</span><br><span class="line">//类型特定函数</span><br><span class="line">dictType *type;</span><br><span class="line">//私有数据</span><br><span class="line">void *private;</span><br><span class="line">//哈希表</span><br><span class="line">dictht ht[2];</span><br><span class="line">//rehash索引</span><br><span class="line">int trehashidx;</span><br><span class="line">&#125; dict;</span><br></pre></td></tr></table></figure>
+<h2 id="4-2-哈希算法"><a href="#4-2-哈希算法" class="headerlink" title="4.2 哈希算法"></a>4.2 哈希算法</h2><p>具体步骤是：1、先计算出键key的hash值——hash = dict-&gt;type-&gt;hashFunction(key);<br>2、利用哈希值和sizeMask属性计算出索引值——index = hash &amp; dict-&gt;ht[x].sizeMask，然后将值放到哈希表对应位置; </p>
+<h2 id="4-3哈希冲突和rehash"><a href="#4-3哈希冲突和rehash" class="headerlink" title="4.3哈希冲突和rehash"></a>4.3哈希冲突和rehash</h2><p>1、哈希冲突使用链表解决；<br>2、rehash时，新的哈希表大小size是第一个大于哈希表size的2的n次方。比如哈希表大小是5，那么新的哈希表大小就是8。并且rehash是渐进式的，字典中的删除、查找、更新都会在两个哈希表上操作，新增加的键值对则保存在新的哈希表h[1]中。随着rehash不断进行，最终原来的哈希表h[0]变成一张空表。这样是为了避免一次性rehash大量数据时，对Redis的性能有太大压力。</p>
+<h1 id="五、跳跃表"><a href="#五、跳跃表" class="headerlink" title="五、跳跃表"></a>五、跳跃表</h1><h1 id="六、整数集合"><a href="#六、整数集合" class="headerlink" title="六、整数集合"></a>六、整数集合</h1><h1 id="七、压缩列表"><a href="#七、压缩列表" class="headerlink" title="七、压缩列表"></a>七、压缩列表</h1><h1 id="八、对象"><a href="#八、对象" class="headerlink" title="八、对象"></a>八、对象</h1><p>介绍完Redis常用的数据结构之后，对象就可以正式登场啦。Redis的对象包括：字符串对象、列表对象、哈希对象、集合对象以及有序集合对象，每种对象至少用到了一种之前提到的数据结构。此外，Redis还支持指定对象的底层数据结构实现，以满足不同场景的需求。</p>
 <h2 id="8-1、对象类型与编码"><a href="#8-1、对象类型与编码" class="headerlink" title="8.1、对象类型与编码"></a>8.1、对象类型与编码</h2><p>Redis的每个对象由一个redisObject来表示，其中和保存数据相关的三个属性分别是type、encoding以及ptr属性。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct redisObject &#123;</span><br><span class="line">//类型</span><br><span class="line">unsigned type:4;</span><br><span class="line"></span><br><span class="line">//编码</span><br><span class="line">unsigned encoding:4;</span><br><span class="line"></span><br><span class="line">//指向底层实现数据结构的指针</span><br><span class="line">void *ptr;</span><br><span class="line">&#125; robj;</span><br></pre></td></tr></table></figure>
-<p>TYPE属性记录了对象的类型，的值以及TYPE命令的对应关系如下表。<br>对象|对象TYPE属性的值|TYPE命令的输出<br>—|:–:|—:<br>字符串对象|REDIS_STRING|”string”<br>列表对象|REDIS_LIST|”list”<br>哈希对象|REDIS_HASH|”hash”<br>集合对象|REDIS_SET|”set”<br>有序集合对象|REDIS_ZSET|”zset”<br>encoding属性记录了对象使用的编码，ptr则指向对象底层的数据结构。而每种对象至少有两种不同的编码。<br>对象类型|编码|底层数据结构|OBJECT ENCODING命令输出<br>—|:–:|:–:|—:<br>REDIS_STRING|REDIS_ENCODING_INT|整数|int<br>REDIS_STRING|REDIS_ENCODING_EMBSTR|embstr编码的SDS|embsr<br>REDIS_STRING|REDIS_ENCODING_RAW|SDS|raw<br>REDIS_LIST|REDIS_ENCODING_ZIPLIST|压缩列表|ziplist<br>REDIS_LIST|REDIS_ENCODING_LINKEDLIST|双端链表|linkedlist<br>REDIS_HASH|REDIS_ENCODING_ZIPLIST|压缩列表|ziplist<br>REDIS_HASH|REDIS_ENCODING_HT|字典|hashtable<br>REDIS_SET|REDIS_ENCODING_INTSE|整数集合intset<br>REDIS_SET|REDIS_ENCODING_HT|字典|hashtable<br>REDIS_ZSET|REDIS_ENCODING_ZIPLIST|压缩列表|ziplist<br>REDIS_ZSET|REDIS_ENCODING_SKIPLIST|跳跃表+字典|skiplist</p>
-<h2 id="8-2-字符串对象"><a href="#8-2-字符串对象" class="headerlink" title="8.2 字符串对象"></a>8.2 字符串对象</h2><p>字符串对象的编码包括int、raw以及embstr。</p>
+<p>TYPE属性记录了对象的类型，的值以及TYPE命令的对应关系如下表。<br>对象|对象TYPE属性的值|TYPE命令的输出<br>—|:–:|—:<br>字符串对象|REDIS_STRING|”string”<br>列表对象|REDIS_LIST|”list”<br>哈希对象|REDIS_HASH|”hash”<br>集合对象|REDIS_SET|”set”<br>有序集合对象|REDIS_ZSET|”zset”<br>encoding属性记录了对象使用的编码，ptr则指向对象底层的数据结构。而每种对象至少有两种不同的编码。</p>
+<table>
+<thead>
+<tr>
+<th>对象类型</th>
+<th align="center">编码</th>
+<th align="center">底层数据结构</th>
+<th align="right">OBJECT ENCODING命令输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>REDIS_STRING</td>
+<td align="center">REDIS_ENCODING_INT</td>
+<td align="center">整数</td>
+<td align="right">int</td>
+</tr>
+<tr>
+<td>REDIS_STRING</td>
+<td align="center">REDIS_ENCODING_EMBSTR</td>
+<td align="center">embstr编码的SDS</td>
+<td align="right">embsr</td>
+</tr>
+<tr>
+<td>REDIS_STRING</td>
+<td align="center">REDIS_ENCODING_RAW</td>
+<td align="center">SDS</td>
+<td align="right">raw</td>
+</tr>
+<tr>
+<td>REDIS_LIST</td>
+<td align="center">REDIS_ENCODING_ZIPLIST</td>
+<td align="center">压缩列表</td>
+<td align="right">ziplist</td>
+</tr>
+<tr>
+<td>REDIS_LIST</td>
+<td align="center">REDIS_ENCODING_LINKEDLIST</td>
+<td align="center">双端链表</td>
+<td align="right">linkedlist</td>
+</tr>
+<tr>
+<td>REDIS_HASH</td>
+<td align="center">REDIS_ENCODING_ZIPLIST</td>
+<td align="center">压缩列表</td>
+<td align="right">ziplist</td>
+</tr>
+<tr>
+<td>REDIS_HASH</td>
+<td align="center">REDIS_ENCODING_HT</td>
+<td align="center">字典</td>
+<td align="right">hashtable</td>
+</tr>
+<tr>
+<td>REDIS_SET</td>
+<td align="center">REDIS_ENCODING_INTSE</td>
+<td align="center">整数集合intset</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td>REDIS_SET</td>
+<td align="center">REDIS_ENCODING_HT</td>
+<td align="center">字典</td>
+<td align="right">hashtable</td>
+</tr>
+<tr>
+<td>REDIS_ZSET</td>
+<td align="center">REDIS_ENCODING_ZIPLIST</td>
+<td align="center">压缩列表</td>
+<td align="right">ziplist</td>
+</tr>
+<tr>
+<td>REDIS_ZSET</td>
+<td align="center">REDIS_ENCODING_SKIPLIST</td>
+<td align="center">跳跃表+字典</td>
+<td align="right">skiplist</td>
+</tr>
+<tr>
+<td>## 8.2 字符串对象</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="right"></td>
+</tr>
+<tr>
+<td>字符串对象的编码包括int、raw以及embstr。</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="right"></td>
+</tr>
+</tbody></table>
 
           
         

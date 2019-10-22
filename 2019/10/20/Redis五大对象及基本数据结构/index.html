@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="第一篇博客，总结下最近学习的Redis知识。 一、Redis的五大对象Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。 二、Redis的底层数据结构了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态字">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-10-22T01:16:44.463Z">
+<meta property="og:updated_time" content="2019-10-22T01:20:18.494Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -327,7 +327,46 @@
 <h1 id="五、跳跃表"><a href="#五、跳跃表" class="headerlink" title="五、跳跃表"></a>五、跳跃表</h1><h1 id="六、整数集合"><a href="#六、整数集合" class="headerlink" title="六、整数集合"></a>六、整数集合</h1><h1 id="七、压缩列表"><a href="#七、压缩列表" class="headerlink" title="七、压缩列表"></a>七、压缩列表</h1><h1 id="八、对象"><a href="#八、对象" class="headerlink" title="八、对象"></a>八、对象</h1><p>介绍完Redis常用的数据结构之后，对象就可以正式登场啦。Redis的对象包括：字符串对象、列表对象、哈希对象、集合对象以及有序集合对象，每种对象至少用到了一种之前提到的数据结构。此外，Redis还支持指定对象的底层数据结构实现，以满足不同场景的需求。</p>
 <h2 id="8-1、对象类型与编码"><a href="#8-1、对象类型与编码" class="headerlink" title="8.1、对象类型与编码"></a>8.1、对象类型与编码</h2><p>Redis的每个对象由一个redisObject来表示，其中和保存数据相关的三个属性分别是type、encoding以及ptr属性。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct redisObject &#123;</span><br><span class="line">//类型</span><br><span class="line">unsigned type:4;</span><br><span class="line"></span><br><span class="line">//编码</span><br><span class="line">unsigned encoding:4;</span><br><span class="line"></span><br><span class="line">//指向底层实现数据结构的指针</span><br><span class="line">void *ptr;</span><br><span class="line">&#125; robj;</span><br></pre></td></tr></table></figure>
-<p>TYPE属性记录了对象的类型，的值以及TYPE命令的对应关系如下表。<br>对象|对象TYPE属性的值|TYPE命令的输出<br>—|:–:|—:<br>字符串对象|REDIS_STRING|”string”<br>列表对象|REDIS_LIST|”list”<br>哈希对象|REDIS_HASH|”hash”<br>集合对象|REDIS_SET|”set”<br>有序集合对象|REDIS_ZSET|”zset”<br>encoding属性记录了对象使用的编码，ptr则指向对象底层的数据结构。而每种对象至少有两种不同的编码。</p>
+<p>TYPE属性记录了对象的类型，的值以及TYPE命令的对应关系如下表。</p>
+<table>
+<thead>
+<tr>
+<th>对象</th>
+<th align="center">对象TYPE属性的值</th>
+<th align="right">TYPE命令的输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符串对象</td>
+<td align="center">REDIS_STRING</td>
+<td align="right">“string”</td>
+</tr>
+<tr>
+<td>列表对象</td>
+<td align="center">REDIS_LIST</td>
+<td align="right">“list”</td>
+</tr>
+<tr>
+<td>哈希对象</td>
+<td align="center">REDIS_HASH</td>
+<td align="right">“hash”</td>
+</tr>
+<tr>
+<td>集合对象</td>
+<td align="center">REDIS_SET</td>
+<td align="right">“set”</td>
+</tr>
+<tr>
+<td>有序集合对象</td>
+<td align="center">REDIS_ZSET</td>
+<td align="right">“zset”</td>
+</tr>
+<tr>
+<td>encoding属性记录了对象使用的编码，ptr则指向对象底层的数据结构。而每种对象至少有两种不同的编码。</td>
+<td align="center"></td>
+<td align="right"></td>
+</tr>
+</tbody></table>
 <table>
 <thead>
 <tr>
@@ -403,19 +442,8 @@
 <td align="center">跳跃表+字典</td>
 <td align="right">skiplist</td>
 </tr>
-<tr>
-<td>## 8.2 字符串对象</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="right"></td>
-</tr>
-<tr>
-<td>字符串对象的编码包括int、raw以及embstr。</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="right"></td>
-</tr>
 </tbody></table>
+<h2 id="8-2-字符串对象"><a href="#8-2-字符串对象" class="headerlink" title="8.2 字符串对象"></a>8.2 字符串对象</h2><p>字符串对象的编码包括int、raw以及embstr。</p>
 
       
     </div>
@@ -577,7 +605,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、Redis的五大对象"><span class="nav-number">1.</span> <span class="nav-text">一、Redis的五大对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Redis的底层数据结构"><span class="nav-number">2.</span> <span class="nav-text">二、Redis的底层数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单动态字符串"><span class="nav-number">2.1.</span> <span class="nav-text">简单动态字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-SDS的定义"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1 SDS的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-SDS的优点"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.2 SDS的优点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、链表"><span class="nav-number">3.</span> <span class="nav-text">三、链表</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-链表节点"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 链表节点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、字典"><span class="nav-number">4.</span> <span class="nav-text">四、字典</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-哈希表和字典"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 哈希表和字典</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-哈希算法"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 哈希算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3哈希冲突和rehash"><span class="nav-number">4.3.</span> <span class="nav-text">4.3哈希冲突和rehash</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、跳跃表"><span class="nav-number">5.</span> <span class="nav-text">五、跳跃表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、整数集合"><span class="nav-number">6.</span> <span class="nav-text">六、整数集合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、压缩列表"><span class="nav-number">7.</span> <span class="nav-text">七、压缩列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、对象"><span class="nav-number">8.</span> <span class="nav-text">八、对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1、对象类型与编码"><span class="nav-number">8.1.</span> <span class="nav-text">8.1、对象类型与编码</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、Redis的五大对象"><span class="nav-number">1.</span> <span class="nav-text">一、Redis的五大对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Redis的底层数据结构"><span class="nav-number">2.</span> <span class="nav-text">二、Redis的底层数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单动态字符串"><span class="nav-number">2.1.</span> <span class="nav-text">简单动态字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-SDS的定义"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1 SDS的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-SDS的优点"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.2 SDS的优点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、链表"><span class="nav-number">3.</span> <span class="nav-text">三、链表</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-链表节点"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 链表节点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、字典"><span class="nav-number">4.</span> <span class="nav-text">四、字典</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-哈希表和字典"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 哈希表和字典</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-哈希算法"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 哈希算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3哈希冲突和rehash"><span class="nav-number">4.3.</span> <span class="nav-text">4.3哈希冲突和rehash</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、跳跃表"><span class="nav-number">5.</span> <span class="nav-text">五、跳跃表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、整数集合"><span class="nav-number">6.</span> <span class="nav-text">六、整数集合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、压缩列表"><span class="nav-number">7.</span> <span class="nav-text">七、压缩列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、对象"><span class="nav-number">8.</span> <span class="nav-text">八、对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1、对象类型与编码"><span class="nav-number">8.1.</span> <span class="nav-text">8.1、对象类型与编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-2-字符串对象"><span class="nav-number">8.2.</span> <span class="nav-text">8.2 字符串对象</span></a></li></ol></li></ol></div>
             
 
           </div>

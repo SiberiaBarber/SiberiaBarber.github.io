@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="一、题目Given n non-negative integers a1, a2, …, an , where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find t">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-17T07:45:37.949Z">
+<meta property="og:updated_time" content="2019-11-17T07:47:25.243Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -303,7 +303,8 @@
 <p>Example:</p>
 <p>Input: [1,8,6,2,5,4,8,3,7]<br>Output: 49</p>
 <h1 id="二、解答"><a href="#二、解答" class="headerlink" title="二、解答"></a>二、解答</h1><h1 id="1、暴力解法"><a href="#1、暴力解法" class="headerlink" title="1、暴力解法"></a>1、暴力解法</h1><p>直接遍历所有的坐标组合，找到最大的容积。时间复杂度O（n^2）;</p>
-<h1 id="2、贪心算法"><a href="#2、贪心算法" class="headerlink" title="2、贪心算法"></a>2、贪心算法</h1><p>从坐标的一头一尾向中心收缩，每一步比较左右边界的高度，高度较小的向里移动一步。然后根据新的坐标计算出容积，和原来的容积相比取较大的容积。</p>
+<h1 id="2、贪心算法"><a href="#2、贪心算法" class="headerlink" title="2、贪心算法"></a>2、贪心算法</h1><p>时间复杂度O（n）。</p>
+<p>从坐标的一头一尾向中心收缩，每一步比较左右边界的高度，高度较小的向里移动一步。然后根据新的坐标计算出容积，和原来的容积相比取较大的容积。</p>
 <p>这个贪心算法,为什么最优解不会被错过？<br>反证法，假设会被错过。假设最优解是横坐标为x1,x2(x2在右边)的这两个点组成的，只考虑扫描到x2时,x1被错过的情况(x2被错过同理)：被错过指的是,当右指针向左扫描经过x2之后,左指针还在x1的左边P处时,x1被错过。</p>
 <p>（1）情况一   x2&gt;p:  x2会被保留,然后左指针向右移动到x1,x1不会被错过<br>（2）情况二   x2&lt;p:<br>  小情况一：height[p]&gt;height[x1]，则最优解为 p,x2而不是 x1,x2。假设不成立。<br>  小情况二：p&lt;=x1  最优解还是p,x2。 因为x2比p和x1都小,所以容器高度取决于x2,而p比x1偏左,所以p,x2比x1,x2面积大。假设不成立。</p>
 <p>这种算法保证了[x1,x2] 的长度是最大的，并且x1, x2 都是彼此搭配最高的。</p>

@@ -228,6 +228,135 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/29/RedisHashSlot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/12/29/RedisHashSlot/" itemprop="url">一致性哈希和哈希槽的对比</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-29T21:13:22+08:00">
+                2019-12-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h1><p>随着memcache和redis的出现，更多人认识到了一致性哈希。</p>
+<p>一致性哈希用于解决分布式缓存系统中的数据选择节点存储问题和数据选择节点读取问题以及在增删节点后减少数据缓存的消失范畴，防止雪崩的发生。</p>
+<p>哈希槽是在redis cluster集群方案中采用的，redis cluster集群没有采用一致性哈希方案，而是采用<strong>数据分片</strong>中的哈希槽来进行数据存储与读取的。</p>
+<h1 id="二、一致性哈希"><a href="#二、一致性哈希" class="headerlink" title="二、一致性哈希"></a>二、一致性哈希</h1><p>一致性hash是一个0-2^32的闭合圆，（拥有2^23个桶空间，每个桶里面可以存储很多数据，可以理解为s3的存储桶）所有节点存储的数据都是不一样的。计算一致性哈希是采用的是如下步骤：</p>
+<ol>
+<li>对节点进行hash,通常使用其节点的ip或者是具有唯一标示的数据进行hash(ip),将其值分布在这个闭合圆上。</li>
+<li>将存储的key进行hash(key),然后将其值要分布在这个闭合圆上。</li>
+<li>从hash(key)在圆上映射的位置开始顺时针方向找到的一个节点即为存储key的节点。如果到圆上的0处都未找到节点，那么0位置后的顺时针方向的第一个节点就是key的存储节点。</li>
+</ol>
+<h3 id="添加节点带来的影响"><a href="#添加节点带来的影响" class="headerlink" title="添加节点带来的影响"></a>添加节点带来的影响</h3><p>图1为一致性hash的分布情况，箭头指向key的分布情况。<br><img src="/.com//pic1.jpg" alt="图1"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/10/new-blog/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1152,7 +1281,7 @@
               
                 <a href="/archives/%20%7C%7C%20archive">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -1165,7 +1294,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">tags</span>
                 
               </div>

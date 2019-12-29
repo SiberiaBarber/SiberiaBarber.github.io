@@ -81,7 +81,7 @@
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;index.html">
+<meta property="og:url" content="https:&#x2F;&#x2F;siberiabarber.github.io&#x2F;index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="en">
 <meta name="twitter:card" content="summary">
@@ -114,7 +114,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="https://siberiabarber.github.io/"/>
 
 
 
@@ -228,7 +228,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/29/RedisHashSlot/">
+    <link itemprop="mainEntityOfPage" href="https://siberiabarber.github.io/2019/12/29/RedisHashSlot/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -308,7 +308,26 @@
 <li>将存储的key进行hash(key),然后将其值要分布在这个闭合圆上。</li>
 <li>从hash(key)在圆上映射的位置开始顺时针方向找到的一个节点即为存储key的节点。如果到圆上的0处都未找到节点，那么0位置后的顺时针方向的第一个节点就是key的存储节点。</li>
 </ol>
-<h3 id="添加节点带来的影响"><a href="#添加节点带来的影响" class="headerlink" title="添加节点带来的影响"></a>添加节点带来的影响</h3><p>图1为一致性hash的分布情况，箭头指向key的分布情况。<br><img src="/.com//pic1.jpg" alt="图1"></p>
+<h3 id="添加节点带来的影响"><a href="#添加节点带来的影响" class="headerlink" title="添加节点带来的影响"></a>添加节点带来的影响</h3><p>图1为一致性hash的分布情况，箭头指向key的分布情况。<br><img src="/2019/12/29/RedisHashSlot/pic1.jpg" alt="图1"></p>
+<p>如果现在node2和node4节点中间增加一个node5节点，那么在node4和node2之间的这些数据要存储的节点就会有所变化。在图中的黄色区域的数据将会从原来的node4节点挪到node5节点。</p>
+<h3 id="删除节点带来的影响"><a href="#删除节点带来的影响" class="headerlink" title="删除节点带来的影响"></a>删除节点带来的影响</h3><p>以图1为基准，删除了node2节点后，原本在node2节点上的数据就会被重新定位node4上。这样就产生一个影响：原来node2的数据转移到node4上，这样node4的内存使用率会骤增，如果node2上存在热点数据，node4会扛不住甚至会可能挂掉，挂掉之后数据又转移给node3,如此循环会造成所有节点崩溃，也就是前面所说的雪崩的情况。</p>
+<h3 id="节点太少的影响"><a href="#节点太少的影响" class="headerlink" title="节点太少的影响"></a>节点太少的影响</h3><p>节点太少的话可能造成数据倾斜的情况，如图中中只有俩节点，可能会造成大量数据存放在node A节点上，而node B节点存储很少的数据。</p>
+<h2 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h2><p>为了解决雪崩现象和数据倾斜现象，提出了虚拟节点这个概念。就是将真实节点计算多个哈希形成多个虚拟节点并放置到哈希环上，定位算法不变，只是多了一步虚拟节点到真实节点映射的过程</p>
+<p>以雪崩现象来说明:如下图节点real1节点又俩个虚拟节点v100和v101,real2有俩个虚拟节点v200和v201，real3节点有v300和v301俩个虚拟节点。</p>
+<p><img src="/2019/12/29/RedisHashSlot/pic2.jpg" alt="图1"></p>
+<p>当real1节点挂掉后，v100和v101节点也会随即消失，这时k1数据就会被分配到v301上，k4就会被分配到了v200上，这就解决了雪崩的问题，当某个节点宕机后，其数据并没有全部分配给某一个节点，而是被分到了多个节点。</p>
+<p>正因为加入了虚拟节点机制，数据倾斜的问题也随之解决</p>
+<p>注意：真实节点不放置到哈希环上，只有虚拟节点才会放上去。</p>
+<h3 id="为什么要使用闭合的哈希环？"><a href="#为什么要使用闭合的哈希环？" class="headerlink" title="为什么要使用闭合的哈希环？"></a>为什么要使用闭合的哈希环？</h3><p>举个例子，如果在2^23-3处有一个key,而2^23-3~2^23处并没有节点,那么这个key该存在哪里节点呢？说到这里你应该明白来吧。</p>
+<h1 id="三、哈希槽"><a href="#三、哈希槽" class="headerlink" title="三、哈希槽"></a>三、哈希槽</h1><p>redis cluster采用数据分片的哈希槽来进行数据存储和数据的读取。redis cluster一共有2^14（16384）个槽，所有的master节点都会有一个槽区比如0～1000，槽数是可以迁移的。master节点的slave节点不分配槽，只拥有读权限。但是注意在代码中redis cluster执行读写操作的都是master节点，并不是你想 的读是从节点，写是主节点。第一次新建redis cluster时，16384个槽是被master节点均匀分布的。</p>
+<p><strong>和一致性哈希相比：</strong></p>
+<p>它并不是闭合的，key的定位规则是根据CRC-16(key)%16384的值来判断属于哪个槽区，从而判断该key属于哪个节点，而一致性哈希是根据hash(key)的值来顺时针找第一个hash(ip)的节点，从而确定key存储在哪个节点。<br>一致性哈希是创建虚拟节点来实现节点宕机后的数据转移并保证数据的安全性和集群的可用性的。redis cluster是采用master节点有多个slave节点机制来保证数据的完整性的,master节点写入数据，slave节点同步数据。当master节点挂机后，slave节点会通过选举机制选举出一个节点变成master节点，实现高可用。但是这里有一点需要考虑，如果master节点存在热点缓存，某一个时刻某个key的访问急剧增高，这时该mater节点可能操劳过度而死，随后从节点选举为主节点后，同样宕机，一次类推，造成缓存雪崩。解决这个问题请看我的另一篇文章如何应对热点缓存问题</p>
+<p>注意：新建的master节点是没有槽区的，需要给master节点分配槽，不然缓存无法命中。分配槽的方法自行百度。<br>删除master节点</p>
+<ol>
+<li>如果主节点有从节点，需要将从节点转移到别的主节点上。</li>
+<li>转移后 如果主节点有哈希槽，去调哈希槽，然后在删除master节点<br>注意：redis cluster的动态扩容和缩容并不会影响集群的使用。</li>
+</ol>
+<p><strong>原博客链接：<a href="https://www.jianshu.com/p/4163916a2a8a" target="_blank" rel="noopener">https://www.jianshu.com/p/4163916a2a8a</a></strong></p>
 
           
         
@@ -357,7 +376,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/10/new-blog/">
+    <link itemprop="mainEntityOfPage" href="https://siberiabarber.github.io/2019/12/10/new-blog/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -480,7 +499,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/17/LeetCode/">
+    <link itemprop="mainEntityOfPage" href="https://siberiabarber.github.io/2019/11/17/LeetCode/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -612,7 +631,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/13/LeetCode%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%9412-Integer-to-Roman/">
+    <link itemprop="mainEntityOfPage" href="https://siberiabarber.github.io/2019/11/13/LeetCode%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%9412-Integer-to-Roman/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -736,7 +755,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/20/Redis%E4%BA%94%E5%A4%A7%E5%AF%B9%E8%B1%A1%E5%8F%8A%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+    <link itemprop="mainEntityOfPage" href="https://siberiabarber.github.io/2019/10/20/Redis%E4%BA%94%E5%A4%A7%E5%AF%B9%E8%B1%A1%E5%8F%8A%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -997,7 +1016,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/20/test-my-site/">
+    <link itemprop="mainEntityOfPage" href="https://siberiabarber.github.io/2019/10/20/test-my-site/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -1116,7 +1135,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/20/hello-world/">
+    <link itemprop="mainEntityOfPage" href="https://siberiabarber.github.io/2019/10/20/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">

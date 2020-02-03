@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://siberiabarber.github.io/"/>
-  <updated>2020-02-03T06:59:25.122Z</updated>
+  <updated>2020-02-03T11:25:49.810Z</updated>
   <id>https://siberiabarber.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>LeetCode_Trapping Rain Water</title>
+    <link href="https://siberiabarber.github.io/2020/02/03/LeetCode-Trapping-Rain-Water/"/>
+    <id>https://siberiabarber.github.io/2020/02/03/LeetCode-Trapping-Rain-Water/</id>
+    <published>2020-02-03T11:12:14.000Z</published>
+    <updated>2020-02-03T11:25:49.810Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="一、题目"><a href="#一、题目" class="headerlink" title="一、题目"></a>一、题目</h1><p><img src="/2020/02/03/LeetCode-Trapping-Rain-Water/1.PNG" alt="图1"></p><p>输入一个数组，请输出该数组能够储水的量。</p><h1 id="二、解题"><a href="#二、解题" class="headerlink" title="二、解题"></a>二、解题</h1><p>思路：双指针。假设数组长度为n，首指针为0，尾指针为n-1：</p><ol><li>leftMax = Math.max(leftMax, height[a]) 并且 rightMax = Math.max(rightMax. height[b]);</li><li>假设leftMax &lt; rightMax，则移动左指针，并且左边指针的水会被存储下来，存储的量为leftMax - height[a]; 假设leftMax &gt;= rightMax, 则移动右指针，右边的水被存储，存储的量是 rightMax - height[b];</li></ol><h1 id="三、具体代码"><a href="#三、具体代码" class="headerlink" title="三、具体代码"></a>三、具体代码</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">trap</span><span class="params">(<span class="keyword">int</span>[] height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> b = height.length - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> leftMax = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> rightMax = <span class="number">0</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> (a &lt;= b) &#123;</span><br><span class="line">            leftMax = Math.max(leftMax, height[a]);</span><br><span class="line">            rightMax = Math.max(rightMax, height[b]);</span><br><span class="line">            <span class="keyword">if</span> (leftMax &lt; rightMax) &#123;</span><br><span class="line">                res += (leftMax - height[a]);</span><br><span class="line">                a++;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                res += (rightMax - height[b]);</span><br><span class="line">                b--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;一、题目&quot;&gt;&lt;a href=&quot;#一、题目&quot; class=&quot;headerlink&quot; title=&quot;一、题目&quot;&gt;&lt;/a&gt;一、题目&lt;/h1&gt;&lt;p&gt;&lt;img src=&quot;/2020/02/03/LeetCode-Trapping-Rain-Water/1.PNG&quot; alt=
+      
+    
+    </summary>
+    
+    
+    
+      <category term="LeetCode" scheme="https://siberiabarber.github.io/tags/LeetCode/"/>
+    
+  </entry>
   
   <entry>
     <title>LeetCode学习 ———— 33.Search in Rotated Sorted Array</title>

@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://siberiabarber.github.io/2020/02/03/LeetCode32/</loc>
+    
+    <lastmod>2020-02-03T06:59:25.122Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://siberiabarber.github.io/tags/index.html</loc>
     
     <lastmod>2020-02-03T06:56:47.664Z</lastmod>
@@ -12,13 +19,6 @@
     <loc>https://siberiabarber.github.io/categories/index.html</loc>
     
     <lastmod>2020-02-03T06:52:45.175Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://siberiabarber.github.io/2020/02/03/LeetCode32/</loc>
-    
-    <lastmod>2020-02-03T06:11:31.201Z</lastmod>
     
   </url>
   

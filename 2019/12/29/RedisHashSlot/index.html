@@ -1,107 +1,44 @@
-extends includes/layout.pug
-
-block top_img
-  - var top_img = page.top_img || theme.post_meta.top_img || theme.top_img || config.top_img
-  if (top_img && page.top_img !== false)
-    - var bg_img = top_img !== true ? `background-image: url(${top_img})` : ''
-    - var flag = top_img === true ? 'no-bg' : ''
-    div#top-container(style=bg_img class=flag)
-      include ./includes/header.pug
-      #post-info
-        #post-title= page.title || _p('no_title')
-        #post-meta
-          if (theme.post_meta.date_type)
-            if (theme.post_meta.date_type === 'both')
-              time.post-meta__date
-                i.fa.fa-calendar(aria-hidden="true")
-                =' '+_p('post.created')+' '+date(page.date, config.date_format)
-                span.post-meta__separator |
-                i.fa.fa-calendar-check-o(aria-hidden="true")
-                =' '+_p('post.updated')+' '+date(page.updated, config.date_format)
-            else
-              - var date_type = theme.post_meta.date_type === 'updated' ? 'updated' : 'date'
-              time.post-meta__date #[i.fa.fa-calendar(aria-hidden="true")] #[=date(page[date_type], config.date_format)]
-          if (theme.post_meta.categories && page.categories.data.length > 0)
-            if (theme.post_meta.date_type)
-              span.post-meta__separator |
-            each item, index in page.categories.data
-              i.fa.fa-inbox.post-meta__icon(aria-hidden="true")
-              a(href=url_for(item.path)).post-meta__categories #[=item.name]
-              if (index < page.categories.data.length - 1)
-                 i.fa.fa-angle-right(aria-hidden="true")
-          if (theme.disqus.enable && theme.disqus.count)
-            if (theme.post_meta.date_type || theme.post_meta.categories && page.categories.data.length > 0)
-              span.post-meta__separator |
-            i.fa.fa-comment-o.post-meta__icon(aria-hidden="true")
-            a(href=url_for(page.path) + '#disqus_thread')
-              span.disqus-comment-count(data-disqus-identifier=page.path)
-          if (theme.wordcount && theme.wordcount.enable)
-            .post-meta-wordcount
-              span= _p('post.wordcount') + ': '
-              span.word-count= wordcount(page.content)
-              span.post-meta__separator |
-              span= _p('post.min2read', min2read(page.content, {cn: 350, en: 160}))
-  else
-    div#top-container.plain
-      include ./includes/header.pug
-
-block content
-  article#post(class="")
-    if (!top_img)
-      #post-title.plain= page.title || _p('no_title')
-      #post-meta
-        if (theme.post_meta.date_type)
-          - var date_type = theme.post_meta.date_type === 'updated' ? '' : 'date'
-          time.post-meta__date #[i.fa.fa-calendar(aria-hidden="true")] #[=date(page[date_type], config.date_format)]
-        if (theme.post_meta.categories && page.categories.data.length > 0)
-          if (theme.post_meta.date_type)
-            span.post-meta__separator |
-          each item, index in page.categories.data
-            i.fa.fa-inbox(aria-hidden="true")
-            a(href=url_for(item.path)).post-meta__categories  #[=item.name]
-            if (index < page.categories.data.length - 1)
-                i.fa.fa-angle-right.post-meta__separator(aria-hidden="true")
-        if (theme.disqus.enable && theme.disqus.count)
-          if (theme.post_meta.date_type || theme.post_meta.categories && page.categories.data.length > 0)
-            span.post-meta__separator |
-          i.fa.fa-comment-o(aria-hidden="true")
-          a(href=url_for(page.path) + '#disqus_thread')
-            span.disqus-comment-count(data-disqus-identifier=page.path)
-        if (theme.wordcount && theme.wordcount.enable)
-          span.post-meta__separator |
-          span.post-meta-wordcount
-            span= _p('post.wordcount') + ': '
-            span.word-count= wordcount(page.content)
-            span.post-meta__separator |
-            span= _p('post.min2read', min2read(page.content, {cn: 350, en: 160}))
-    #post-content.article-container!= page.content
-  if (theme.post_copyright && theme.post_copyright.enable)
-    .post-copyright
-      .post-copyright__author
-        span.post-copyright-meta= _p('post.copyright.author') + ": "
-        span.post-copyright-info
-          a(href=`mailto:${config.email}`) #[=config.author]
-      .post-copyright__type
-        span.post-copyright-meta= _p('post.copyright.link') + ": "
-        span.post-copyright-info
-          a(href=url_for(page.permalink)) #[=page.permalink]
-      .post-copyright__notice
-        span.post-copyright-meta= _p('post.copyright.copyright_notice') + ": "
-        span.post-copyright-info!= _p('post.copyright.copyright_content', theme.post_copyright.license_url, theme.post_copyright.license, config.url, config.title)
-  if (theme.post_meta.tags)
-    .post-meta__tag-list
-      each item, index in page.tags.data
-        a(href=url_for(item.path)).post-meta__tags #[=item.name]
-  if (theme.QR_code)
-    if (theme.QR_code.length > 0)
-      .post-qr-code
-        each item in theme.QR_code
-          .post-qr-code-item
-            img.post-qr-code__img(src=(item.itemlist||item).img)
-            .post-qr-code__desc=(item.itemlist||item).text
-  include includes/share/index.pug
-  include includes/pagination.pug
-  if (theme.adv && theme.adv.enable)
-    .post-adv!= theme.adv.info
-  if page.comments !== false
-    include includes/comments/index.pug
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="一致性哈希和哈希槽的对比"><meta name="keywords" content="Redis"><meta name="author" content="John Doe"><meta name="copyright" content="John Doe"><title>一致性哈希和哈希槽的对比 | Hexo</title><link rel="shortcut icon" href="/melody-favicon.ico"><link rel="stylesheet" href="/css/index.css?version=1.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.7.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  }
+} </script><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、背景"><span class="toc-number">1.</span> <span class="toc-text">一、背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、一致性哈希"><span class="toc-number">2.</span> <span class="toc-text">二、一致性哈希</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#添加节点带来的影响"><span class="toc-number">2.0.1.</span> <span class="toc-text">添加节点带来的影响</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除节点带来的影响"><span class="toc-number">2.0.2.</span> <span class="toc-text">删除节点带来的影响</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#节点太少的影响"><span class="toc-number">2.0.3.</span> <span class="toc-text">节点太少的影响</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#虚拟节点"><span class="toc-number">2.1.</span> <span class="toc-text">虚拟节点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么要使用闭合的哈希环？"><span class="toc-number">2.1.1.</span> <span class="toc-text">为什么要使用闭合的哈希环？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三、哈希槽"><span class="toc-number">3.</span> <span class="toc-text">三、哈希槽</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">John Doe</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">10</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">6</span></a></div></div></div><div id="content-outer"><div class="no-bg" id="top-container"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">Hexo</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span><span class="pull-right"></span></div><div id="post-info"><div id="post-title">一致性哈希和哈希槽的对比</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-12-29</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h1 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h1><p>随着memcache和redis的出现，更多人认识到了一致性哈希。</p>
+<p>一致性哈希用于解决分布式缓存系统中的数据选择节点存储问题和数据选择节点读取问题以及在增删节点后减少数据缓存的消失范畴，防止雪崩的发生。</p>
+<p>哈希槽是在redis cluster集群方案中采用的，redis cluster集群没有采用一致性哈希方案，而是采用<strong>数据分片</strong>中的哈希槽来进行数据存储与读取的。</p>
+<h1 id="二、一致性哈希"><a href="#二、一致性哈希" class="headerlink" title="二、一致性哈希"></a>二、一致性哈希</h1><p>一致性hash是一个0-2^32的闭合圆，（拥有2^23个桶空间，每个桶里面可以存储很多数据，可以理解为s3的存储桶）所有节点存储的数据都是不一样的。计算一致性哈希是采用的是如下步骤：</p>
+<ol>
+<li>对节点进行hash,通常使用其节点的ip或者是具有唯一标示的数据进行hash(ip),将其值分布在这个闭合圆上。</li>
+<li>将存储的key进行hash(key),然后将其值要分布在这个闭合圆上。</li>
+<li>从hash(key)在圆上映射的位置开始顺时针方向找到的一个节点即为存储key的节点。如果到圆上的0处都未找到节点，那么0位置后的顺时针方向的第一个节点就是key的存储节点。</li>
+</ol>
+<h3 id="添加节点带来的影响"><a href="#添加节点带来的影响" class="headerlink" title="添加节点带来的影响"></a>添加节点带来的影响</h3><p>图1为一致性hash的分布情况，箭头指向key的分布情况。<br><img src="/2019/12/29/RedisHashSlot/pic1.jpg" alt="图1"></p>
+<p>如果现在node2和node4节点中间增加一个node5节点，那么在node4和node2之间的这些数据要存储的节点就会有所变化。在图中的黄色区域的数据将会从原来的node4节点挪到node5节点。</p>
+<h3 id="删除节点带来的影响"><a href="#删除节点带来的影响" class="headerlink" title="删除节点带来的影响"></a>删除节点带来的影响</h3><p>以图1为基准，删除了node2节点后，原本在node2节点上的数据就会被重新定位node4上。这样就产生一个影响：原来node2的数据转移到node4上，这样node4的内存使用率会骤增，如果node2上存在热点数据，node4会扛不住甚至会可能挂掉，挂掉之后数据又转移给node3,如此循环会造成所有节点崩溃，也就是前面所说的雪崩的情况。</p>
+<h3 id="节点太少的影响"><a href="#节点太少的影响" class="headerlink" title="节点太少的影响"></a>节点太少的影响</h3><p>节点太少的话可能造成数据倾斜的情况，如图中中只有俩节点，可能会造成大量数据存放在node A节点上，而node B节点存储很少的数据。</p>
+<h2 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h2><p>为了解决雪崩现象和数据倾斜现象，提出了虚拟节点这个概念。就是将真实节点计算多个哈希形成多个虚拟节点并放置到哈希环上，定位算法不变，只是多了一步虚拟节点到真实节点映射的过程</p>
+<p>以雪崩现象来说明:如下图节点real1节点又俩个虚拟节点v100和v101,real2有俩个虚拟节点v200和v201，real3节点有v300和v301俩个虚拟节点。</p>
+<p><img src="/2019/12/29/RedisHashSlot/pic2.jpg" alt="图1"></p>
+<p>当real1节点挂掉后，v100和v101节点也会随即消失，这时k1数据就会被分配到v301上，k4就会被分配到了v200上，这就解决了雪崩的问题，当某个节点宕机后，其数据并没有全部分配给某一个节点，而是被分到了多个节点。</p>
+<p>正因为加入了虚拟节点机制，数据倾斜的问题也随之解决</p>
+<p>注意：真实节点不放置到哈希环上，只有虚拟节点才会放上去。</p>
+<h3 id="为什么要使用闭合的哈希环？"><a href="#为什么要使用闭合的哈希环？" class="headerlink" title="为什么要使用闭合的哈希环？"></a>为什么要使用闭合的哈希环？</h3><p>举个例子，如果在2^23-3处有一个key,而2^23-3~2^23处并没有节点,那么这个key该存在哪里节点呢？说到这里你应该明白来吧。</p>
+<h1 id="三、哈希槽"><a href="#三、哈希槽" class="headerlink" title="三、哈希槽"></a>三、哈希槽</h1><p>redis cluster采用数据分片的哈希槽来进行数据存储和数据的读取。redis cluster一共有2^14（16384）个槽，所有的master节点都会有一个槽区比如0～1000，槽数是可以迁移的。master节点的slave节点不分配槽，只拥有读权限。但是注意在代码中redis cluster执行读写操作的都是master节点，并不是你想 的读是从节点，写是主节点。第一次新建redis cluster时，16384个槽是被master节点均匀分布的。</p>
+<p><strong>和一致性哈希相比：</strong></p>
+<p>它并不是闭合的，key的定位规则是根据CRC-16(key)%16384的值来判断属于哪个槽区，从而判断该key属于哪个节点，而一致性哈希是根据hash(key)的值来顺时针找第一个hash(ip)的节点，从而确定key存储在哪个节点。<br>一致性哈希是创建虚拟节点来实现节点宕机后的数据转移并保证数据的安全性和集群的可用性的。redis cluster是采用master节点有多个slave节点机制来保证数据的完整性的,master节点写入数据，slave节点同步数据。当master节点挂机后，slave节点会通过选举机制选举出一个节点变成master节点，实现高可用。但是这里有一点需要考虑，如果master节点存在热点缓存，某一个时刻某个key的访问急剧增高，这时该mater节点可能操劳过度而死，随后从节点选举为主节点后，同样宕机，一次类推，造成缓存雪崩。解决这个问题请看我的另一篇文章如何应对热点缓存问题</p>
+<p>注意：新建的master节点是没有槽区的，需要给master节点分配槽，不然缓存无法命中。分配槽的方法自行百度。<br>删除master节点</p>
+<ol>
+<li>如果主节点有从节点，需要将从节点转移到别的主节点上。</li>
+<li>转移后 如果主节点有哈希槽，去调哈希槽，然后在删除master节点<br>注意：redis cluster的动态扩容和缩容并不会影响集群的使用。</li>
+</ol>
+<p><strong>原博客链接：<a href="https://www.jianshu.com/p/4163916a2a8a" target="_blank" rel="noopener">https://www.jianshu.com/p/4163916a2a8a</a></strong></p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined" target="_blank" rel="noopener">John Doe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://siberiabarber.github.io/2019/12/29/RedisHashSlot/">https://siberiabarber.github.io/2019/12/29/RedisHashSlot/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Redis/">Redis</a></div><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/12/30/redis-single-thread/"><i class="fa fa-chevron-left">  </i><span>为什么Redis是单线程还能支持高并发？</span></a></div><div class="next-post pull-right"><a href="/2019/12/10/new-blog/"><span>LeetCode学习——	22. Generate Parentheses(生成括号)</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2020 By John Doe</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody" target="_blank" rel="noopener"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.7.0"></script><script src="/js/fancybox.js?version=1.7.0"></script><script src="/js/sidebar.js?version=1.7.0"></script><script src="/js/copy.js?version=1.7.0"></script><script src="/js/fireworks.js?version=1.7.0"></script><script src="/js/transition.js?version=1.7.0"></script><script src="/js/scroll.js?version=1.7.0"></script><script src="/js/head.js?version=1.7.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

@@ -1,5 +1,333 @@
-extends includes/layout.pug
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content=""><meta name="keywords" content=""><meta name="author" content="John Doe"><meta name="copyright" content="John Doe"><title>Hexo</title><link rel="shortcut icon" href="/melody-favicon.ico"><link rel="stylesheet" href="/css/index.css?version=1.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.7.0"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  }
+} </script><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="false"><div class="author-info"><div class="author-info__avatar text-center"><img src="/img/avatar.png"></div><div class="author-info__name text-center">John Doe</div><div class="author-info__description text-center"></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">Articles</span><span class="pull-right">10</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">Tags</span><span class="pull-right">6</span></a></div></div></div><nav class="no-bg" id="nav"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">Hexo</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span><span class="pull-right"></span></div><div id="site-info"><div id="site-title">Hexo</div><div id="site-sub-title"></div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="/2020/02/03/LeetCode32/">LeetCode33 Search in Rotated Sorted Array</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-02-03</time><div class="content"><p>Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.</p>
+<p>(i.e., [0,1,2,4,5,6,7] might become [4,5,6,7,0,1,2]).</p>
+<p>You are given a target value to search. If found in the array return its index, otherwise return -1.</p>
+<p>You may assume no duplicate exists in the array.</p>
+<p>Your algorithm’s runtime complexity must be in the order of O(log n).</p>
+<p>Example 1:</p>
+<p>Input: nums = [4,5,6,7,0,1,2], target = 0<br>Output: 4</p>
+<p>Example 2:</p>
+<p>Input: nums = [4,5,6,7,0,1,2], target = 3<br>Output: -1</p>
+<h1 id="一、题意与思路"><a href="#一、题意与思路" class="headerlink" title="一、题意与思路"></a>一、题意与思路</h1><p>目标是找出被旋转的有序数组中的target的下标。思路如下：</p>
+<ol>
+<li>如果target比A[mid]值要小<ol start="2">
+<li>如果A[mid]右边有序（A[mid]&lt;A[high])<ol start="3">
+<li>那么target肯定不在右边（target比右边的都得小），在左边找</li>
+</ol>
+</li>
+<li>如果A[mid]左边有序<ol start="5">
+<li>那么比较target和A[low]，如果target比A[low]还要小，证明target不在这一区，去右边找；反之，左边找。</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>如果target比A[mid]值要大<ol start="7">
+<li>如果A[mid]左边有序（A[mid]&gt;A[low]）<ol start="8">
+<li>那么target肯定不在左边（target比左边的都得大），在右边查找</li>
+</ol>
+</li>
+<li>如果A[mid]右边有序<ol start="10">
+<li>那么比较target和A[high]，如果target比A[high]还要大，证明target不在这一区，去左边找；反之，右边找。</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="二、代码"><a href="#二、代码" class="headerlink" title="二、代码"></a>二、代码</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">search</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums == <span class="keyword">null</span> || nums.length &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> low = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> high = nums.length - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (low &lt;= high) &#123;</span><br><span class="line">            <span class="keyword">int</span> mid = (low + high) / <span class="number">2</span>;</span><br><span class="line">            <span class="comment">//1、如果target大于mid的值</span></span><br><span class="line">            <span class="keyword">if</span> (target &gt; nums[mid]) &#123;</span><br><span class="line">                <span class="comment">//1.1  左侧有序</span></span><br><span class="line">                <span class="keyword">if</span> (nums[mid] &gt; nums[low]) &#123;</span><br><span class="line">                    low = mid + <span class="number">1</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;<span class="comment">//1.2 右侧有序</span></span><br><span class="line">                    <span class="keyword">if</span> (target &gt; nums[high]) &#123;</span><br><span class="line">                        high = mid - <span class="number">1</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        low = mid + <span class="number">1</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//2、如果target的值小于mid的值</span></span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &lt; nums[mid]) &#123;</span><br><span class="line">                <span class="comment">//2.1 右侧有序</span></span><br><span class="line">                <span class="keyword">if</span> (nums[mid] &lt; nums[high]) &#123;</span><br><span class="line">                    high = mid - <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//2.2 左侧有序</span></span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (target &lt; nums[low]) &#123;</span><br><span class="line">                        low = mid + <span class="number">1</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        high = mid - <span class="number">1</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> mid;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-block content
-  include includes/recent-posts.pug
-  include includes/pagination.pug
+
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2020/01/05/select-poll-and-epoll/">select、poll和epoll详解</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2020-01-05</time><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fa fa-tag article-meta__icon" aria-hidden="true"></i><a class="article-meta__tags" href="/tags/linux%E3%80%81IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">linux、IO多路复用</a></span><div class="content"><p>slect，poll，epoll都是IO多路复用的机制。I/O多路复用就是通过一种机制，一个进程可以监视多个描述符，一旦某个描述符就绪（一般是读就绪或者写就绪），能够通知程序进行相应的读写操作。但select，poll，epoll本质上都是同步I/O，因为他们都需要在读写事件就绪后自己负责进行读写，也就是说这个读写过程是阻塞的，而异步I/O则无需自己负责进行读写，异步I/O的实现会负责把数据从内核拷贝到用户空间。</p>
+<h1 id="一、select"><a href="#一、select" class="headerlink" title="一、select"></a>一、select</h1><p>int select (int n, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);</p>
+<p>select 函数监视的文件描述符分3类，分别是writefds、readfds、和exceptfds。调用后select函数会阻塞，直到有描述副就绪（有数据 可读、可写、或者有except），或者超时（timeout指定等待时间，如果立即返回设为null即可），函数返回。当select函数返回后，可以 通过遍历fdset，来找到就绪的描述符。</p>
+<p>select目前几乎在所有的平台上支持，其良好跨平台支持也是它的一个优点。select的一 个缺点在于单个进程能够监视的文件描述符的数量存在最大限制，在Linux上一般为1024，可以通过修改宏定义甚至重新编译内核的方式提升这一限制，但 是这样也会造成效率的降低。</p>
+<h1 id="二、poll"><a href="#二、poll" class="headerlink" title="二、poll"></a>二、poll</h1><p>int poll (struct pollfd *fds, unsigned int nfds, int timeout);</p>
+<p>不同与select使用三个位图来表示三个fdset的方式，poll使用一个 pollfd的指针实现。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> fd; <span class="comment">/* file descriptor */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">short</span> events; <span class="comment">/* requested events to watch */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">short</span> revents; <span class="comment">/* returned events witnessed */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>pollfd结构包含了要监视的event和发生的event，不再使用select“参数-值”传递的方式。同时，pollfd并没有最大数量限制（但是数量过大后性能也是会下降）。 和select函数一样，poll返回后，需要轮询pollfd来获取就绪的描述符。<strong>从上面看，select和poll都需要在返回后，通过遍历文件描述符来获取已经就绪的socket。事实上，同时连接的大量客户端在一时刻可能只有很少的处于就绪状态，因此随着监视的描述符数量的增长，其效率也会线性下降。</strong></p>
+<h1 id="三、epoll"><a href="#三、epoll" class="headerlink" title="三、epoll"></a>三、epoll</h1><p>epoll是在2.6内核中提出的，是之前的select和poll的增强版本。相对于select和poll来说，epoll更加灵活，没有描述符限制。epoll使用一个文件描述符管理多个描述符，将用户关系的文件描述符的事件存放到内核的一个事件表中，这样在用户空间和内核空间的copy只需一次。</p>
+<p>在 select/poll中，进程只有在调用一定的方法后，内核才对所有监视的文件描述符进行扫描，而epoll事先通过epoll_ctl()来注册一 个文件描述符，一旦基于某个文件描述符就绪时，内核会采用类似callback的回调机制，迅速激活这个文件描述符，当进程调用epoll_wait() 时便得到通知。(此处去掉了遍历文件描述符，而是通过监听回调的的机制。这正是epoll的魅力所在。)</p>
+<p>epoll的优点主要是一下几个方面：</p>
+<ol>
+<li><p>监视的描述符数量不受限制，它所支持的FD上限是最大可以打开文件的数目，这个数字一般远大于2048,举个例子,在1GB内存的机器上大约是10万左 右，具体数目可以cat /proc/sys/fs/file-max察看,一般来说这个数目和系统内存关系很大。select的最大缺点就是进程打开的fd是有数量限制的。这对 于连接数量比较大的服务器来说根本不能满足。虽然也可以选择多进程的解决方案( Apache就是这样实现的)，不过虽然linux上面创建进程的代价比较小，但仍旧是不可忽视的，加上进程间数据同步远比不上线程间同步的高效，所以也不是一种完美的方案。</p>
+</li>
+<li><p>IO的效率不会随着监视fd的数量的增长而下降。epoll不同于select和poll轮询的方式，而是通过每个fd定义的回调函数来实现的。只有就绪的fd才会执行回调函数。</p>
+</li>
+</ol>
+<p>如果没有大量的idle -connection或者dead-connection，epoll的效率并不会比select/poll高很多，但是当遇到大量的idle- connection，就会发现epoll的效率大大高于select/poll。</p>
+<p><strong>参考博客链接：<a href="https://segmentfault.com/a/1190000003063859" target="_blank" rel="noopener">https://segmentfault.com/a/1190000003063859</a></strong></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/12/30/redis-single-thread/">为什么Redis是单线程还能支持高并发？</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-12-30</time><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fa fa-tag article-meta__icon" aria-hidden="true"></i><a class="article-meta__tags" href="/tags/redis/">redis</a></span><div class="content"><h1 id="一、Redis为什么是单线程"><a href="#一、Redis为什么是单线程" class="headerlink" title="一、Redis为什么是单线程"></a>一、Redis为什么是单线程</h1><p>Redis单线程实际上是网络请求模块使用了单线程（多路复用），即单个线程处理所有的网络请求。但是其他模块还是使用了多个线程。因为CPU不是Redis的瓶颈。Redis的瓶颈最有可能是机器内存或者网络带宽，既然单线程容易实现，而且CPU不会成为瓶颈，那就顺理成章地采用单线程的方案了。关于redis的性能，官方网站也有，普通笔记本轻松处理每秒几十万的请求。</p>
+<h1 id="二、Redis为什么处理速度很快"><a href="#二、Redis为什么处理速度很快" class="headerlink" title="二、Redis为什么处理速度很快"></a>二、Redis为什么处理速度很快</h1><ol>
+<li><p>完全基于内存，绝大部分请求是纯粹的内存操作，非常快速。数据存在内存中，类似于HashMap，HashMap的优势就是查找和操作的时间复杂度都是O(1)；</p>
+</li>
+<li><p>数据结构简单，对数据操作也简单，Redis中的数据结构是专门进行设计的；</p>
+</li>
+<li><p>采用单线程，避免了不必要的上下文切换和竞争条件，也不存在多进程或者多线程导致的切换而消耗 CPU，不用去考虑各种锁的问题，不存在加锁释放锁操作，没有因为可能出现死锁而导致的性能消耗；</p>
+</li>
+<li><p>使用多路I/O复用模型，非阻塞IO；</p>
+</li>
+<li><p>使用底层模型不同，它们之间底层实现方式以及与客户端之间通信的应用协议不一样，Redis直接自己构建了VM 机制 ，因为一般的系统调用系统函数的话，会浪费一定的时间去移动和请求；</p>
+</li>
+</ol>
+<h1 id="三、多路I-O复用模型，非阻塞的IO"><a href="#三、多路I-O复用模型，非阻塞的IO" class="headerlink" title="三、多路I/O复用模型，非阻塞的IO"></a>三、多路I/O复用模型，非阻塞的IO</h1><h2 id="1、IO模式"><a href="#1、IO模式" class="headerlink" title="1、IO模式"></a>1、IO模式</h2><p>对于一次IO访问（以read举例），数据会先被拷贝到操作系统内核的缓冲区中，然后才会从操作系统内核的缓冲区拷贝到应用程序的地址空间。所以说，当一个read操作发生时，它会经历两个阶段：</p>
+<ol>
+<li>等待数据准备 (Waiting for the data to be ready)</li>
+<li>将数据从内核拷贝到进程中 (Copying the data from the kernel to the process)</li>
+</ol>
+<p>正式因为这两个阶段，linux系统产生了下面五种网络模式的方案。</p>
+<ul>
+<li>阻塞 I/O（blocking IO）</li>
+<li>非阻塞 I/O（nonblocking IO）</li>
+<li>I/O 多路复用（ IO multiplexing）</li>
+<li>信号驱动 I/O（ signal driven IO）</li>
+<li>异步 I/O（asynchronous IO）</li>
+</ul>
+<p>由于signal driven IO在实际中并不常用，所以只提及剩下的四种IO Model。</p>
+<h2 id="2、-4种常用IO模型"><a href="#2、-4种常用IO模型" class="headerlink" title="2、 4种常用IO模型"></a>2、 4种常用IO模型</h2><h3 id="2-1-阻塞-I-O（blocking-IO）"><a href="#2-1-阻塞-I-O（blocking-IO）" class="headerlink" title="2.1 阻塞 I/O（blocking IO）"></a>2.1 阻塞 I/O（blocking IO）</h3><p>在linux中，默认情况下所有的socket都是blocking，一个典型的读操作流程大概是这样：</p>
+<p><img src="/2019/12/30/redis-single-thread/1.png" alt="图1"></p>
+<p>当用户进程调用了recvfrom这个系统调用，kernel就开始了IO的第一个阶段：准备数据（对于网络IO来说，很多时候数据在一开始还没有到达。比如，还没有收到一个完整的UDP包。这个时候kernel就要等待足够的数据到来）。这个过程需要等待，也就是说数据被拷贝到操作系统内核的缓冲区中是需要一个过程的。而在用户进程这边，整个进程会被阻塞（当然，是进程自己选择的阻塞）。当kernel一直等到数据准备好了，它就会将数据从kernel中拷贝到用户内存，然后kernel返回结果，用户进程才解除block的状态，重新运行起来。</p>
+<p><strong>所以，blocking IO的特点就是在IO执行的两个阶段都被block了。</strong></p>
+<h3 id="2-2-非阻塞-I-O（nonblocking-IO）"><a href="#2-2-非阻塞-I-O（nonblocking-IO）" class="headerlink" title="2.2 非阻塞 I/O（nonblocking IO）"></a>2.2 非阻塞 I/O（nonblocking IO）</h3><p>linux下，可以通过设置socket使其变为non-blocking。当对一个non-blocking socket执行读操作时，流程是这个样子：<br><img src="/2019/12/30/redis-single-thread/2.png" alt="图2"></p>
+<p>当用户进程发出read操作时，如果kernel中的数据还没有准备好，那么它并不会block用户进程，而是立刻返回一个error。从用户进程角度讲 ，它发起一个read操作后，并不需要等待，而是马上就得到了一个结果。用户进程判断结果是一个error时，它就知道数据还没有准备好，于是它可以再次发送read操作。一旦kernel中的数据准备好了，并且又再次收到了用户进程的system call，那么它马上就将数据拷贝到了用户内存，然后返回。</p>
+<p><strong>所以，nonblocking IO的特点是用户进程需要不断的主动询问kernel数据好了没有。</strong></p>
+<h3 id="2-3-I-O-多路复用（-IO-multiplexing）"><a href="#2-3-I-O-多路复用（-IO-multiplexing）" class="headerlink" title="2.3 I/O 多路复用（ IO multiplexing）"></a>2.3 I/O 多路复用（ IO multiplexing）</h3><p>IO multiplexing就是我们说的select，poll，epoll，有些地方也称这种IO方式为event driven IO。select/epoll的好处就在于单个process就可以同时处理多个网络连接的IO。它的基本原理就是select，poll，epoll这个function会不断的轮询所负责的所有socket，当某个socket有数据到达了，就通知用户进程。 </p>
+<p><img src="/2019/12/30/redis-single-thread/3.png" alt="图3"></p>
+<p>当用户进程调用了select，那么整个进程会被block，而同时，kernel会“监视”所有select负责的socket，当任何一个socket中的数据准备好了，select就会返回。这个时候用户进程再调用read操作，将数据从kernel拷贝到用户进程。</p>
+<p>所以，I/O 多路复用的特点是通过一种机制一个进程能同时等待多个文件描述符，而这些文件描述符（套接字描述符）其中的任意一个进入读就绪状态，select()函数就可以返回。</p>
+<p>这个图和blocking IO的图其实并没有太大的不同，事实上，还更差一些。因为这里需要使用两个system call (select 和 recvfrom)，而blocking IO只调用了一个system call (recvfrom)。但是，用select的优势在于它可以同时处理多个connection。</p>
+<p>所以，如果处理的连接数不是很高的话，使用select/epoll的web server不一定比使用multi-threading + blocking IO的web server性能更好，可能延迟还更大。select/epoll的优势并不是对于单个连接能处理得更快，而是在于能处理更多的连接。）</p>
+<p>在IO multiplexing Model中，实际中，对于每一个socket，一般都设置成为non-blocking，但是，如上图所示，整个用户的process其实是一直被block的。只不过process是被select这个函数block，而不是被socket IO给block。</p>
+<h3 id="2-4-异步-I-O（asynchronous-IO）"><a href="#2-4-异步-I-O（asynchronous-IO）" class="headerlink" title="2.4 异步 I/O（asynchronous IO）"></a>2.4 异步 I/O（asynchronous IO）</h3><p>Linux下的asynchronous IO其实用得很少。先看一下它的流程:</p>
+<p><img src="/2019/12/30/redis-single-thread/4.png" alt="图4"></p>
+<p>用户进程发起read操作之后，立刻就可以开始去做其它的事。而另一方面，从kernel的角度，当它受到一个asynchronous read之后，首先它会立刻返回，所以不会对用户进程产生任何block。然后，kernel会等待数据准备完成，然后将数据拷贝到用户内存，当这一切都完成之后，kernel会给用户进程发送一个signal，告诉它read操作完成了。</p>
+<h1 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h1><h2 id="blocking和non-blocking的区别"><a href="#blocking和non-blocking的区别" class="headerlink" title="blocking和non-blocking的区别"></a>blocking和non-blocking的区别</h2><p>调用blocking IO会一直block住对应的进程直到操作完成，而non-blocking IO在kernel还准备数据的情况下会立刻返回。</p>
+<h2 id="synchronous-IO和asynchronous-IO的区别"><a href="#synchronous-IO和asynchronous-IO的区别" class="headerlink" title="synchronous IO和asynchronous IO的区别"></a>synchronous IO和asynchronous IO的区别</h2><p>在说明synchronous IO和asynchronous IO的区别之前，需要先给出两者的定义。POSIX的定义是这样子的：</p>
+<ul>
+<li>A synchronous I/O operation causes the requesting process to be blocked until that I/O operation completes;</li>
+<li>An asynchronous I/O operation does not cause the requesting process to be blocked;</li>
+</ul>
+<p>两者的区别就在于synchronous IO做”IO operation”的时候会将process阻塞。按照这个定义，之前所述的blocking IO，non-blocking IO，IO multiplexing都属于synchronous IO。</p>
+<p>有人会说，non-blocking IO并没有被block啊。这里有个非常“狡猾”的地方，定义中所指的”IO operation”是指真实的IO操作，就是例子中的recvfrom这个system call。non-blocking IO在执行recvfrom这个system call的时候，如果kernel的数据没有准备好，这时候不会block进程。但是，当kernel中数据准备好的时候，recvfrom会将数据从kernel拷贝到用户内存中，这个时候进程是被block了，在这段时间内，进程是被block的。</p>
+<p>而asynchronous IO则不一样，当进程发起IO 操作之后，就直接返回再也不理睬了，直到kernel发送一个信号，告诉进程说IO完成。在这整个过程中，进程完全没有被block。</p>
+<p>non-blocking IO和asynchronous IO的区别还是很明显的。在non-blocking IO中，虽然进程大部分时间都不会被block，但是它仍然要求进程去主动的check，并且当数据准备完成以后，也需要进程主动的再次调用recvfrom来将数据拷贝到用户内存。而asynchronous IO则完全不同。它就像是用户进程将整个IO操作交给了他人（kernel）完成，然后他人做完后发信号通知。在此期间，用户进程不需要去检查IO操作的状态，也不需要主动的去拷贝数据。</p>
+<p>下一篇记录下select、poll和epoll的区别</p>
+<p>参考博客：<a href="https://segmentfault.com/a/1190000003063859" target="_blank" rel="noopener">https://segmentfault.com/a/1190000003063859</a>;<br><a href="https://blog.csdn.net/u010623927/article/details/87918603" target="_blank" rel="noopener">https://blog.csdn.net/u010623927/article/details/87918603</a></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/12/29/RedisHashSlot/">一致性哈希和哈希槽的对比</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-12-29</time><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fa fa-tag article-meta__icon" aria-hidden="true"></i><a class="article-meta__tags" href="/tags/Redis/">Redis</a></span><div class="content"><h1 id="一、背景"><a href="#一、背景" class="headerlink" title="一、背景"></a>一、背景</h1><p>随着memcache和redis的出现，更多人认识到了一致性哈希。</p>
+<p>一致性哈希用于解决分布式缓存系统中的数据选择节点存储问题和数据选择节点读取问题以及在增删节点后减少数据缓存的消失范畴，防止雪崩的发生。</p>
+<p>哈希槽是在redis cluster集群方案中采用的，redis cluster集群没有采用一致性哈希方案，而是采用<strong>数据分片</strong>中的哈希槽来进行数据存储与读取的。</p>
+<h1 id="二、一致性哈希"><a href="#二、一致性哈希" class="headerlink" title="二、一致性哈希"></a>二、一致性哈希</h1><p>一致性hash是一个0-2^32的闭合圆，（拥有2^23个桶空间，每个桶里面可以存储很多数据，可以理解为s3的存储桶）所有节点存储的数据都是不一样的。计算一致性哈希是采用的是如下步骤：</p>
+<ol>
+<li>对节点进行hash,通常使用其节点的ip或者是具有唯一标示的数据进行hash(ip),将其值分布在这个闭合圆上。</li>
+<li>将存储的key进行hash(key),然后将其值要分布在这个闭合圆上。</li>
+<li>从hash(key)在圆上映射的位置开始顺时针方向找到的一个节点即为存储key的节点。如果到圆上的0处都未找到节点，那么0位置后的顺时针方向的第一个节点就是key的存储节点。</li>
+</ol>
+<h3 id="添加节点带来的影响"><a href="#添加节点带来的影响" class="headerlink" title="添加节点带来的影响"></a>添加节点带来的影响</h3><p>图1为一致性hash的分布情况，箭头指向key的分布情况。<br><img src="/2019/12/29/RedisHashSlot/pic1.jpg" alt="图1"></p>
+<p>如果现在node2和node4节点中间增加一个node5节点，那么在node4和node2之间的这些数据要存储的节点就会有所变化。在图中的黄色区域的数据将会从原来的node4节点挪到node5节点。</p>
+<h3 id="删除节点带来的影响"><a href="#删除节点带来的影响" class="headerlink" title="删除节点带来的影响"></a>删除节点带来的影响</h3><p>以图1为基准，删除了node2节点后，原本在node2节点上的数据就会被重新定位node4上。这样就产生一个影响：原来node2的数据转移到node4上，这样node4的内存使用率会骤增，如果node2上存在热点数据，node4会扛不住甚至会可能挂掉，挂掉之后数据又转移给node3,如此循环会造成所有节点崩溃，也就是前面所说的雪崩的情况。</p>
+<h3 id="节点太少的影响"><a href="#节点太少的影响" class="headerlink" title="节点太少的影响"></a>节点太少的影响</h3><p>节点太少的话可能造成数据倾斜的情况，如图中中只有俩节点，可能会造成大量数据存放在node A节点上，而node B节点存储很少的数据。</p>
+<h2 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h2><p>为了解决雪崩现象和数据倾斜现象，提出了虚拟节点这个概念。就是将真实节点计算多个哈希形成多个虚拟节点并放置到哈希环上，定位算法不变，只是多了一步虚拟节点到真实节点映射的过程</p>
+<p>以雪崩现象来说明:如下图节点real1节点又俩个虚拟节点v100和v101,real2有俩个虚拟节点v200和v201，real3节点有v300和v301俩个虚拟节点。</p>
+<p><img src="/2019/12/29/RedisHashSlot/pic2.jpg" alt="图1"></p>
+<p>当real1节点挂掉后，v100和v101节点也会随即消失，这时k1数据就会被分配到v301上，k4就会被分配到了v200上，这就解决了雪崩的问题，当某个节点宕机后，其数据并没有全部分配给某一个节点，而是被分到了多个节点。</p>
+<p>正因为加入了虚拟节点机制，数据倾斜的问题也随之解决</p>
+<p>注意：真实节点不放置到哈希环上，只有虚拟节点才会放上去。</p>
+<h3 id="为什么要使用闭合的哈希环？"><a href="#为什么要使用闭合的哈希环？" class="headerlink" title="为什么要使用闭合的哈希环？"></a>为什么要使用闭合的哈希环？</h3><p>举个例子，如果在2^23-3处有一个key,而2^23-3~2^23处并没有节点,那么这个key该存在哪里节点呢？说到这里你应该明白来吧。</p>
+<h1 id="三、哈希槽"><a href="#三、哈希槽" class="headerlink" title="三、哈希槽"></a>三、哈希槽</h1><p>redis cluster采用数据分片的哈希槽来进行数据存储和数据的读取。redis cluster一共有2^14（16384）个槽，所有的master节点都会有一个槽区比如0～1000，槽数是可以迁移的。master节点的slave节点不分配槽，只拥有读权限。但是注意在代码中redis cluster执行读写操作的都是master节点，并不是你想 的读是从节点，写是主节点。第一次新建redis cluster时，16384个槽是被master节点均匀分布的。</p>
+<p><strong>和一致性哈希相比：</strong></p>
+<p>它并不是闭合的，key的定位规则是根据CRC-16(key)%16384的值来判断属于哪个槽区，从而判断该key属于哪个节点，而一致性哈希是根据hash(key)的值来顺时针找第一个hash(ip)的节点，从而确定key存储在哪个节点。<br>一致性哈希是创建虚拟节点来实现节点宕机后的数据转移并保证数据的安全性和集群的可用性的。redis cluster是采用master节点有多个slave节点机制来保证数据的完整性的,master节点写入数据，slave节点同步数据。当master节点挂机后，slave节点会通过选举机制选举出一个节点变成master节点，实现高可用。但是这里有一点需要考虑，如果master节点存在热点缓存，某一个时刻某个key的访问急剧增高，这时该mater节点可能操劳过度而死，随后从节点选举为主节点后，同样宕机，一次类推，造成缓存雪崩。解决这个问题请看我的另一篇文章如何应对热点缓存问题</p>
+<p>注意：新建的master节点是没有槽区的，需要给master节点分配槽，不然缓存无法命中。分配槽的方法自行百度。<br>删除master节点</p>
+<ol>
+<li>如果主节点有从节点，需要将从节点转移到别的主节点上。</li>
+<li>转移后 如果主节点有哈希槽，去调哈希槽，然后在删除master节点<br>注意：redis cluster的动态扩容和缩容并不会影响集群的使用。</li>
+</ol>
+<p><strong>原博客链接：<a href="https://www.jianshu.com/p/4163916a2a8a" target="_blank" rel="noopener">https://www.jianshu.com/p/4163916a2a8a</a></strong></p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/12/10/new-blog/">LeetCode学习——	22. Generate Parentheses(生成括号)</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-12-10</time><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fa fa-tag article-meta__icon" aria-hidden="true"></i><a class="article-meta__tags" href="/tags/backtrack-leetcode/">backtrack leetcode</a></span><div class="content"><h1 id="一、题目"><a href="#一、题目" class="headerlink" title="一、题目"></a>一、题目</h1><p>Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.</p>
+<p>For example, given n = 3, a solution set is:<br>【<br>  “((()))”,<br>  “(()())”,<br>  “(())()”,<br>  “()(())”,<br>  “()()()”<br>】</p>
+<h1 id="二、思路"><a href="#二、思路" class="headerlink" title="二、思路"></a>二、思路</h1><p>回溯法：当左括号的数量（解法中的openNum）小于max，可以添加”(“；当右括号的数量（closeNum）小于左括号的数量，添加”)”；当字符串的长度等于2n时，说明已经达到叶节点，可以放进result集合中。</p>
+<p>tips：可以把每次调用backtrack看作为一次二叉树的分叉，添加左括号向左分叉；添加右括号向右分叉。我们只需将叶子节点的值全部收集起来就可，但是分叉条件是必须满足左括号数量始终大于等于右括号数量。</p>
+<h1 id="三、解答"><a href="#三、解答" class="headerlink" title="三、解答"></a>三、解答</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">generateParenthesis</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        backtrack(res, <span class="string">""</span>, <span class="number">0</span>, <span class="number">0</span>, n);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">backtrack</span><span class="params">(List&lt;String&gt; list, String str, <span class="keyword">int</span> openNum, <span class="keyword">int</span> closeNum, <span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (str.length() == <span class="number">2</span> * max) &#123;</span><br><span class="line">            list.add(str);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (openNum &lt; max) &#123;</span><br><span class="line">            backtrack(list, str + <span class="string">"("</span>, openNum + <span class="number">1</span>, closeNum, max);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (closeNum &lt; openNum) &#123;</span><br><span class="line">            backtrack(list, str + <span class="string">")"</span>, openNum, closeNum + <span class="number">1</span>, max);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/17/LeetCode/">LeetCode学习——11. Container With Most Water</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-11-17</time><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fa fa-tag article-meta__icon" aria-hidden="true"></i><a class="article-meta__tags" href="/tags/LeetCode/">LeetCode</a></span><div class="content"><h1 id="一、题目"><a href="#一、题目" class="headerlink" title="一、题目"></a>一、题目</h1><p>Given n non-negative integers a1, a2, …, an , where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water.</p>
+<p>Note: You may not slant the container and n is at least 2.</p>
+<p>Example:</p>
+<p>Input: [1,8,6,2,5,4,8,3,7]<br>Output: 49</p>
+<h1 id="二、解答"><a href="#二、解答" class="headerlink" title="二、解答"></a>二、解答</h1><h1 id="1、暴力解法"><a href="#1、暴力解法" class="headerlink" title="1、暴力解法"></a>1、暴力解法</h1><p>直接遍历所有的坐标组合，找到最大的容积。时间复杂度O（n^2）;</p>
+<h1 id="2、贪心算法"><a href="#2、贪心算法" class="headerlink" title="2、贪心算法"></a>2、贪心算法</h1><p>时间复杂度O（n）。</p>
+<p>从坐标的一头一尾向中心收缩，每一步比较左右边界的高度，高度较小的向里移动一步。然后根据新的坐标计算出容积，和原来的容积相比取较大的容积。</p>
+<p>这个贪心算法,为什么最优解不会被错过？<br>反证法，假设会被错过。假设最优解是横坐标为x1,x2(x2在右边)的这两个点组成的，只考虑扫描到x2时,x1被错过的情况(x2被错过同理)：被错过指的是,当右指针向左扫描经过x2之后,左指针还在x1的左边P处时,x1被错过。</p>
+<p>（1）情况一   x2&gt;p:  x2会被保留,然后左指针向右移动到x1,x1不会被错过<br>（2）情况二   x2&lt;p:<br>  小情况一：height[p]&gt;height[x1]，则最优解为 p,x2而不是 x1,x2。假设不成立。<br>  小情况二：p&lt;=x1  最优解还是p,x2。 因为x2比p和x1都小,所以容器高度取决于x2,而p比x1偏左,所以p,x2比x1,x2面积大。假设不成立。</p>
+<p>这种算法保证了[x1,x2] 的长度是最大的，并且x1, x2 都是彼此搭配最高的。</p>
+<p>解答代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxArea</span><span class="params">(<span class="keyword">int</span>[] height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> j = height.length - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(i &lt; j) &#123;</span><br><span class="line">            <span class="keyword">int</span> area = getArea(height, i, j);</span><br><span class="line">            res = res &lt; area ? area : res;</span><br><span class="line">            <span class="keyword">if</span>(height[i] &gt; height[j]) &#123;</span><br><span class="line">                j--;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                i++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getArea</span><span class="params">(<span class="keyword">int</span>[] height, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> area = (j - i) * Math.min(height[i], height[j]);</span><br><span class="line">        <span class="keyword">return</span> area;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/11/13/LeetCode%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%9412-Integer-to-Roman/">LeetCode学习——12. Integer to Roman</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-11-13</time><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fa fa-tag article-meta__icon" aria-hidden="true"></i><a class="article-meta__tags" href="/tags/LeetCode/">LeetCode</a></span><div class="content"><p>最近开始做LeetCode题目，锻炼算法能力，遇到一些有趣的以及有价值的题目会记录下来。</p>
+<h1 id="一、Integer-to-Roman"><a href="#一、Integer-to-Roman" class="headerlink" title="一、Integer to Roman"></a>一、Integer to Roman</h1><p>题目细节不赘述，大致意思是给出一个数字，求出它的罗马数字表示方法。开始时我想用循环做，从个位数开始依次解析，然后根据规律拼凑字符，尝试了一下，比较复杂。看了别人的解答，恍然大悟：有时候适当用一些枚举集合，干一些脏活累活，可以让程序变得十分优雅。</p>
+<h1 id="二、代码"><a href="#二、代码" class="headerlink" title="二、代码"></a>二、代码</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">intToRoman</span><span class="params">(<span class="keyword">int</span> num)</span> </span>&#123;</span><br><span class="line">        String[] M = <span class="keyword">new</span> String[]&#123;<span class="string">""</span> ,<span class="string">"M"</span>, <span class="string">"MM"</span>, <span class="string">"MMM"</span>&#125;;</span><br><span class="line">        String[] C = <span class="keyword">new</span> String[]&#123;<span class="string">""</span>, <span class="string">"C"</span>, <span class="string">"CC"</span>, <span class="string">"CCC"</span>, <span class="string">"CD"</span>, <span class="string">"D"</span>, <span class="string">"DC"</span>, <span class="string">"DCC"</span>, <span class="string">"DCCC"</span>, <span class="string">"CM"</span>&#125;;</span><br><span class="line">        String[] X = &#123;<span class="string">""</span>, <span class="string">"X"</span>, <span class="string">"XX"</span>, <span class="string">"XXX"</span>, <span class="string">"XL"</span>, <span class="string">"L"</span>, <span class="string">"LX"</span>, <span class="string">"LXX"</span>, <span class="string">"LXXX"</span>, <span class="string">"XC"</span>&#125;;</span><br><span class="line">        String[] I = &#123;<span class="string">""</span>, <span class="string">"I"</span>, <span class="string">"II"</span>, <span class="string">"III"</span>, <span class="string">"IV"</span>, <span class="string">"V"</span>, <span class="string">"VI"</span>, <span class="string">"VII"</span>, <span class="string">"VIII"</span>, <span class="string">"IX"</span>&#125;;</span><br><span class="line">        <span class="keyword">return</span> M[num/<span class="number">1000</span>] + C[(num%<span class="number">1000</span>)/<span class="number">100</span>] + X[(num%<span class="number">100</span>)/<span class="number">10</span>] + I[num%<span class="number">10</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/20/Redis%E4%BA%94%E5%A4%A7%E5%AF%B9%E8%B1%A1%E5%8F%8A%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">Redis五大对象及基本数据结构</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-20</time><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fa fa-tag article-meta__icon" aria-hidden="true"></i><a class="article-meta__tags" href="/tags/Redis-Learning/">Redis Learning</a></span><div class="content"><p>  第一篇博客，总结下最近学习的Redis知识。</p>
+<h1 id="一、Redis的五大对象"><a href="#一、Redis的五大对象" class="headerlink" title="一、Redis的五大对象"></a>一、Redis的五大对象</h1><p>Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。</p>
+<h1 id="二、Redis的底层数据结构"><a href="#二、Redis的底层数据结构" class="headerlink" title="二、Redis的底层数据结构"></a>二、Redis的底层数据结构</h1><p>了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态字符串、链表、字典、跳跃表、整数集合、压缩列表等，这些数据结构组成了五大对象。下面逐一进行介绍。</p>
+<h2 id="简单动态字符串"><a href="#简单动态字符串" class="headerlink" title="简单动态字符串"></a>简单动态字符串</h2><p>Redis的源代码是用C写的，但是C里面的字符串功能不够强大，因此Redis自己构建了一种名为简单动态字符串（Simple Dynamic String, SDS）的抽象类型。</p>
+<h3 id="2-1-SDS的定义"><a href="#2-1-SDS的定义" class="headerlink" title="2.1 SDS的定义"></a>2.1 SDS的定义</h3><p>每个sds.h/sdshdr表示一个SDS值，如下所示。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//记录buf数组中已经使用的字节数量</span></span><br><span class="line"><span class="keyword">int</span> len;</span><br><span class="line"></span><br><span class="line"><span class="comment">//buf数据中未使用的字节数量</span></span><br><span class="line"><span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//字节数组，用来保存字符串 </span></span><br><span class="line"><span class="keyword">char</span> buf[];</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-SDS的优点"><a href="#2-2-SDS的优点" class="headerlink" title="2.2 SDS的优点"></a>2.2 SDS的优点</h3><p>相较于C中的字符串，SDS有以下优点： </p>
+<ol>
+<li>获取字符串长度时间复杂度为O(1),直接访问len属性；C中字符串复杂度为O(N),需要遍历整个字符串；</li>
+<li>避免缓冲区溢出：当SDS拼接字符串时，假如SDS的空间不够，SDS会先扩大字符串的空间，然后再进行拼接；</li>
+<li>拼接策略可以减少修改字符串带来的内存分配次数：空间预分配+惰性空间释放（缩短字符串长度时不会真正重分配内存，只调整free长度）；</li>
+<li>二进制安全；</li>
+<li>可以使用一些C语言的字符串函数。</li>
+</ol>
+<h1 id="三、链表"><a href="#三、链表" class="headerlink" title="三、链表"></a>三、链表</h1><h2 id="3-1-链表节点"><a href="#3-1-链表节点" class="headerlink" title="3.1 链表节点"></a>3.1 链表节点</h2><p>每个链表节点可以用adlist.h/listNode结构来表示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct listNode&#123;</span><br><span class="line">//前置节点</span><br><span class="line">struct listNode *prev;</span><br><span class="line"></span><br><span class="line">//后置节点</span><br><span class="line">struct listNode *next;</span><br><span class="line"></span><br><span class="line">//节点的值</span><br><span class="line">void * value;</span><br><span class="line">&#125;listNode;</span><br></pre></td></tr></table></figure>
+<p>多个listNode组成了链表，并且由list节点来持有。该list节点为链表提供了表头指针head、表尾指针tail以及链表长度计数器len，并且存在dup、free和match函数对节点进行复制、释放、对比节点值等操作。由于链表表头节点的前置节点和表尾的后置节点都指向null，所以Redis的链表是无环链表。</p>
+<h1 id="四、字典"><a href="#四、字典" class="headerlink" title="四、字典"></a>四、字典</h1><p>字典中，一个键（key）和一个值（value）进行关联，关联的键和值就是键值对。字典中的每个键都是独一无二的。</p>
+<h2 id="4-1-哈希表和字典"><a href="#4-1-哈希表和字典" class="headerlink" title="4.1 哈希表和字典"></a>4.1 哈希表和字典</h2><p>Redis的字典是使用哈希表实现的，一个哈希表中有多个哈希节点，每个哈希表节点保存了字典中的一个键值对。哈希表的结构定义是。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">type struct dicht&#123;</span><br><span class="line">//哈希表数组</span><br><span class="line">dictEntry **table;</span><br><span class="line"></span><br><span class="line">//哈希表大小;</span><br><span class="line">unsigned long size;</span><br><span class="line"></span><br><span class="line">//哈希表掩码大小，等于size-1</span><br><span class="line">unsigned long sizeMask;</span><br><span class="line"></span><br><span class="line">//该哈希表已有的节点数量</span><br><span class="line">unsigned long used;</span><br><span class="line">&#125;dicht;</span><br></pre></td></tr></table></figure>
+<p>table属性书一个数组，数组中每个元素都保存了一个指向dict.h/dictEntry结构的指针，每个dictEntry结构都保存了一个键值对。size记录了哈希表的大小，也就是table数组的大小。<br>哈希表的节点用dictEntry结构表示，每个dictEntry结构都保存了一个键值对。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">typedef struct dictEntry&#123;</span><br><span class="line">//键 </span><br><span class="line">void *key;</span><br><span class="line">//值</span><br><span class="line">union&#123;</span><br><span class="line"> void *val;</span><br><span class="line"> unit64_tu64;</span><br><span class="line"> int64_ts64;</span><br><span class="line">&#125; v;</span><br><span class="line">//指向下个哈希表节点，形成链表</span><br><span class="line">struct dictEntry *next;</span><br><span class="line">&#125; dictEntry;</span><br></pre></td></tr></table></figure>
+<p>字典的结构如下。type属性和private属性针对不同类型的键值对，为创建多态字典而生。ht是包含两个数组的属性，一般只使用ht[0],h[1]只在rehash时使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct dict &#123;</span><br><span class="line">//类型特定函数</span><br><span class="line">dictType *type;</span><br><span class="line">//私有数据</span><br><span class="line">void *private;</span><br><span class="line">//哈希表</span><br><span class="line">dictht ht[2];</span><br><span class="line">//rehash索引</span><br><span class="line">int trehashidx;</span><br><span class="line">&#125; dict;</span><br></pre></td></tr></table></figure>
+<h2 id="4-2-哈希算法"><a href="#4-2-哈希算法" class="headerlink" title="4.2 哈希算法"></a>4.2 哈希算法</h2><p>具体步骤是：1、先计算出键key的hash值——hash = dict-&gt;type-&gt;hashFunction(key);<br>2、利用哈希值和sizeMask属性计算出索引值——index = hash &amp; dict-&gt;ht[x].sizeMask，然后将值放到哈希表对应位置; </p>
+<h2 id="4-3哈希冲突和rehash"><a href="#4-3哈希冲突和rehash" class="headerlink" title="4.3哈希冲突和rehash"></a>4.3哈希冲突和rehash</h2><p>1、哈希冲突使用链表解决；<br>2、rehash时，新的哈希表大小size是第一个大于哈希表size的2的n次方。比如哈希表大小是5，那么新的哈希表大小就是8。并且rehash是渐进式的，字典中的删除、查找、更新都会在两个哈希表上操作，新增加的键值对则保存在新的哈希表h[1]中。随着rehash不断进行，最终原来的哈希表h[0]变成一张空表。这样是为了避免一次性rehash大量数据时，对Redis的性能有太大压力。</p>
+<h1 id="五、跳跃表"><a href="#五、跳跃表" class="headerlink" title="五、跳跃表"></a>五、跳跃表</h1><h1 id="六、整数集合"><a href="#六、整数集合" class="headerlink" title="六、整数集合"></a>六、整数集合</h1><h1 id="七、压缩列表"><a href="#七、压缩列表" class="headerlink" title="七、压缩列表"></a>七、压缩列表</h1><h1 id="八、对象"><a href="#八、对象" class="headerlink" title="八、对象"></a>八、对象</h1><p>介绍完Redis常用的数据结构之后，对象就可以正式登场啦。Redis的对象包括：字符串对象、列表对象、哈希对象、集合对象以及有序集合对象，每种对象至少用到了一种之前提到的数据结构。此外，Redis还支持指定对象的底层数据结构实现，以满足不同场景的需求。</p>
+<h2 id="8-1、对象类型与编码"><a href="#8-1、对象类型与编码" class="headerlink" title="8.1、对象类型与编码"></a>8.1、对象类型与编码</h2><p>Redis的每个对象由一个redisObject来表示，其中和保存数据相关的三个属性分别是type、encoding以及ptr属性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct redisObject &#123;</span><br><span class="line">//类型</span><br><span class="line">unsigned type:4;</span><br><span class="line"></span><br><span class="line">//编码</span><br><span class="line">unsigned encoding:4;</span><br><span class="line"></span><br><span class="line">//指向底层实现数据结构的指针</span><br><span class="line">void *ptr;</span><br><span class="line">&#125; robj;</span><br></pre></td></tr></table></figure>
+<p>TYPE属性记录了对象的类型，的值以及TYPE命令的对应关系如下表。</p>
+<table>
+<thead>
+<tr>
+<th>对象</th>
+<th align="center">对象TYPE属性的值</th>
+<th align="right">TYPE命令的输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符串对象</td>
+<td align="center">REDIS_STRING</td>
+<td align="right">“string”</td>
+</tr>
+<tr>
+<td>列表对象</td>
+<td align="center">REDIS_LIST</td>
+<td align="right">“list”</td>
+</tr>
+<tr>
+<td>哈希对象</td>
+<td align="center">REDIS_HASH</td>
+<td align="right">“hash”</td>
+</tr>
+<tr>
+<td>集合对象</td>
+<td align="center">REDIS_SET</td>
+<td align="right">“set”</td>
+</tr>
+<tr>
+<td>有序集合对象</td>
+<td align="center">REDIS_ZSET</td>
+<td align="right">“zset”</td>
+</tr>
+</tbody></table>
+<p>encoding属性记录了对象使用的编码，ptr则指向对象底层的数据结构。而每种对象至少有两种不同的编码。</p>
+<table>
+<thead>
+<tr>
+<th>对象类型</th>
+<th align="center">编码</th>
+<th align="center">底层数据结构</th>
+<th align="right">OBJECT ENCODING命令输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>REDIS_STRING</td>
+<td align="center">REDIS_ENCODING_INT</td>
+<td align="center">整数</td>
+<td align="right">int</td>
+</tr>
+<tr>
+<td>REDIS_STRING</td>
+<td align="center">REDIS_ENCODING_EMBSTR</td>
+<td align="center">embstr编码的SDS</td>
+<td align="right">embsr</td>
+</tr>
+<tr>
+<td>REDIS_STRING</td>
+<td align="center">REDIS_ENCODING_RAW</td>
+<td align="center">SDS</td>
+<td align="right">raw</td>
+</tr>
+<tr>
+<td>REDIS_LIST</td>
+<td align="center">REDIS_ENCODING_ZIPLIST</td>
+<td align="center">压缩列表</td>
+<td align="right">ziplist</td>
+</tr>
+<tr>
+<td>REDIS_LIST</td>
+<td align="center">REDIS_ENCODING_LINKEDLIST</td>
+<td align="center">双端链表</td>
+<td align="right">linkedlist</td>
+</tr>
+<tr>
+<td>REDIS_HASH</td>
+<td align="center">REDIS_ENCODING_ZIPLIST</td>
+<td align="center">压缩列表</td>
+<td align="right">ziplist</td>
+</tr>
+<tr>
+<td>REDIS_HASH</td>
+<td align="center">REDIS_ENCODING_HT</td>
+<td align="center">字典</td>
+<td align="right">hashtable</td>
+</tr>
+<tr>
+<td>REDIS_SET</td>
+<td align="center">REDIS_ENCODING_INTSE</td>
+<td align="center">整数集合intset</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td>REDIS_SET</td>
+<td align="center">REDIS_ENCODING_HT</td>
+<td align="center">字典</td>
+<td align="right">hashtable</td>
+</tr>
+<tr>
+<td>REDIS_ZSET</td>
+<td align="center">REDIS_ENCODING_ZIPLIST</td>
+<td align="center">压缩列表</td>
+<td align="right">ziplist</td>
+</tr>
+<tr>
+<td>REDIS_ZSET</td>
+<td align="center">REDIS_ENCODING_SKIPLIST</td>
+<td align="center">跳跃表+字典</td>
+<td align="right">skiplist</td>
+</tr>
+</tbody></table>
+<h2 id="8-2-字符串对象"><a href="#8-2-字符串对象" class="headerlink" title="8.2 字符串对象"></a>8.2 字符串对象</h2><p>字符串对象的编码包括int、raw以及embstr。  测试</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/20/test-my-site/">test_my_site</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-20</time><div class="content"></div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="/2019/10/20/hello-world/">Hello World</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-20</time><div class="content"><p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+</div><hr></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2020 By John Doe</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody" target="_blank" rel="noopener"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.7.0"></script><script src="/js/fancybox.js?version=1.7.0"></script><script src="/js/sidebar.js?version=1.7.0"></script><script src="/js/copy.js?version=1.7.0"></script><script src="/js/fireworks.js?version=1.7.0"></script><script src="/js/transition.js?version=1.7.0"></script><script src="/js/scroll.js?version=1.7.0"></script><script src="/js/head.js?version=1.7.0"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script></body></html>

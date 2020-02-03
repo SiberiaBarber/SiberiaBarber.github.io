@@ -1,821 +1,107 @@
-<!DOCTYPE html>
-
-
-
-  
-
-
-<html class="theme-next pisces use-motion" lang="en">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-<meta name="theme-color" content="#222">
-
-
-
-
-
-
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
-
-
-
-
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
-
-
-  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
-
-
-
-
-
-  <meta name="keywords" content="Redis Learning," />
-
-
-
-
-
-
-
-
-
-
-<meta name="description" content="第一篇博客，总结下最近学习的Redis知识。 一、Redis的五大对象Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。 二、Redis的底层数据结构了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态字">
-<meta name="keywords" content="Redis Learning">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Redis五大对象及基本数据结构">
-<meta property="og:url" content="https:&#x2F;&#x2F;siberiabarber.github.io&#x2F;2019&#x2F;10&#x2F;20&#x2F;Redis%E4%BA%94%E5%A4%A7%E5%AF%B9%E8%B1%A1%E5%8F%8A%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84&#x2F;index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="第一篇博客，总结下最近学习的Redis知识。 一、Redis的五大对象Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。 二、Redis的底层数据结构了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态字">
-<meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-13T14:12:27.297Z">
-<meta name="twitter:card" content="summary">
-
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Pisces',
-    version: '5.1.4',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: true,
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    duoshuo: {
-      userId: '0',
-      author: 'Author'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
-
-
-
-  <link rel="canonical" href="https://siberiabarber.github.io/2019/10/20/Redis五大对象及基本数据结构/"/>
-
-
-
-
-
-  <title>Redis五大对象及基本数据结构 | Hexo</title>
-  
-
-
-
-
-
-
-
-
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" lang="en">
-
-  
-  
-    
-  
-
-  <div class="container sidebar-position-left page-post-detail">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta ">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Hexo</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-      
-        <p class="site-subtitle"></p>
-      
-  </div>
-
-  <div class="site-nav-toggle">
-    <button>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
-</div>
-
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/%20" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            Home
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives/%20" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            Archives
-          </a>
-        </li>
-      
-
-      
-    </ul>
-  
-
-  
-</nav>
-
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://siberiabarber.github.io/2019/10/20/Redis%E4%BA%94%E5%A4%A7%E5%AF%B9%E8%B1%A1%E5%8F%8A%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">Redis五大对象及基本数据结构</h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-20T19:28:56+08:00">
-                2019-10-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <p>  第一篇博客，总结下最近学习的Redis知识。</p>
-<h1 id="一、Redis的五大对象"><a href="#一、Redis的五大对象" class="headerlink" title="一、Redis的五大对象"></a>一、Redis的五大对象</h1><p>Redis是一种高性能的Key-Value型数据库，它的每个键值对都由对象组成，包括了：字符串对象、列表对象、哈希对象、集合对象、有序集合对象。其中键只可以是字符串对象，而值可以是任意5种对象的一种。</p>
-<h1 id="二、Redis的底层数据结构"><a href="#二、Redis的底层数据结构" class="headerlink" title="二、Redis的底层数据结构"></a>二、Redis的底层数据结构</h1><p>了解Redis对象的工作原理之前，需要介绍底层的数据结构。Redis底层的数据结构包括简单动态字符串、链表、字典、跳跃表、整数集合、压缩列表等，这些数据结构组成了五大对象。下面逐一进行介绍。</p>
-<h2 id="简单动态字符串"><a href="#简单动态字符串" class="headerlink" title="简单动态字符串"></a>简单动态字符串</h2><p>Redis的源代码是用C写的，但是C里面的字符串功能不够强大，因此Redis自己构建了一种名为简单动态字符串（Simple Dynamic String, SDS）的抽象类型。</p>
-<h3 id="2-1-SDS的定义"><a href="#2-1-SDS的定义" class="headerlink" title="2.1 SDS的定义"></a>2.1 SDS的定义</h3><p>每个sds.h/sdshdr表示一个SDS值，如下所示。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//记录buf数组中已经使用的字节数量</span></span><br><span class="line"><span class="keyword">int</span> len;</span><br><span class="line"></span><br><span class="line"><span class="comment">//buf数据中未使用的字节数量</span></span><br><span class="line"><span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//字节数组，用来保存字符串 </span></span><br><span class="line"><span class="keyword">char</span> buf[];</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="2-2-SDS的优点"><a href="#2-2-SDS的优点" class="headerlink" title="2.2 SDS的优点"></a>2.2 SDS的优点</h3><p>相较于C中的字符串，SDS有以下优点： </p>
-<ol>
-<li>获取字符串长度时间复杂度为O(1),直接访问len属性；C中字符串复杂度为O(N),需要遍历整个字符串；</li>
-<li>避免缓冲区溢出：当SDS拼接字符串时，假如SDS的空间不够，SDS会先扩大字符串的空间，然后再进行拼接；</li>
-<li>拼接策略可以减少修改字符串带来的内存分配次数：空间预分配+惰性空间释放（缩短字符串长度时不会真正重分配内存，只调整free长度）；</li>
-<li>二进制安全；</li>
-<li>可以使用一些C语言的字符串函数。</li>
-</ol>
-<h1 id="三、链表"><a href="#三、链表" class="headerlink" title="三、链表"></a>三、链表</h1><h2 id="3-1-链表节点"><a href="#3-1-链表节点" class="headerlink" title="3.1 链表节点"></a>3.1 链表节点</h2><p>每个链表节点可以用adlist.h/listNode结构来表示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct listNode&#123;</span><br><span class="line">//前置节点</span><br><span class="line">struct listNode *prev;</span><br><span class="line"></span><br><span class="line">//后置节点</span><br><span class="line">struct listNode *next;</span><br><span class="line"></span><br><span class="line">//节点的值</span><br><span class="line">void * value;</span><br><span class="line">&#125;listNode;</span><br></pre></td></tr></table></figure>
-<p>多个listNode组成了链表，并且由list节点来持有。该list节点为链表提供了表头指针head、表尾指针tail以及链表长度计数器len，并且存在dup、free和match函数对节点进行复制、释放、对比节点值等操作。由于链表表头节点的前置节点和表尾的后置节点都指向null，所以Redis的链表是无环链表。</p>
-<h1 id="四、字典"><a href="#四、字典" class="headerlink" title="四、字典"></a>四、字典</h1><p>字典中，一个键（key）和一个值（value）进行关联，关联的键和值就是键值对。字典中的每个键都是独一无二的。</p>
-<h2 id="4-1-哈希表和字典"><a href="#4-1-哈希表和字典" class="headerlink" title="4.1 哈希表和字典"></a>4.1 哈希表和字典</h2><p>Redis的字典是使用哈希表实现的，一个哈希表中有多个哈希节点，每个哈希表节点保存了字典中的一个键值对。哈希表的结构定义是。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">type struct dicht&#123;</span><br><span class="line">//哈希表数组</span><br><span class="line">dictEntry **table;</span><br><span class="line"></span><br><span class="line">//哈希表大小;</span><br><span class="line">unsigned long size;</span><br><span class="line"></span><br><span class="line">//哈希表掩码大小，等于size-1</span><br><span class="line">unsigned long sizeMask;</span><br><span class="line"></span><br><span class="line">//该哈希表已有的节点数量</span><br><span class="line">unsigned long used;</span><br><span class="line">&#125;dicht;</span><br></pre></td></tr></table></figure>
-<p>table属性书一个数组，数组中每个元素都保存了一个指向dict.h/dictEntry结构的指针，每个dictEntry结构都保存了一个键值对。size记录了哈希表的大小，也就是table数组的大小。<br>哈希表的节点用dictEntry结构表示，每个dictEntry结构都保存了一个键值对。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">typedef struct dictEntry&#123;</span><br><span class="line">//键 </span><br><span class="line">void *key;</span><br><span class="line">//值</span><br><span class="line">union&#123;</span><br><span class="line"> void *val;</span><br><span class="line"> unit64_tu64;</span><br><span class="line"> int64_ts64;</span><br><span class="line">&#125; v;</span><br><span class="line">//指向下个哈希表节点，形成链表</span><br><span class="line">struct dictEntry *next;</span><br><span class="line">&#125; dictEntry;</span><br></pre></td></tr></table></figure>
-<p>字典的结构如下。type属性和private属性针对不同类型的键值对，为创建多态字典而生。ht是包含两个数组的属性，一般只使用ht[0],h[1]只在rehash时使用。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct dict &#123;</span><br><span class="line">//类型特定函数</span><br><span class="line">dictType *type;</span><br><span class="line">//私有数据</span><br><span class="line">void *private;</span><br><span class="line">//哈希表</span><br><span class="line">dictht ht[2];</span><br><span class="line">//rehash索引</span><br><span class="line">int trehashidx;</span><br><span class="line">&#125; dict;</span><br></pre></td></tr></table></figure>
-<h2 id="4-2-哈希算法"><a href="#4-2-哈希算法" class="headerlink" title="4.2 哈希算法"></a>4.2 哈希算法</h2><p>具体步骤是：1、先计算出键key的hash值——hash = dict-&gt;type-&gt;hashFunction(key);<br>2、利用哈希值和sizeMask属性计算出索引值——index = hash &amp; dict-&gt;ht[x].sizeMask，然后将值放到哈希表对应位置; </p>
-<h2 id="4-3哈希冲突和rehash"><a href="#4-3哈希冲突和rehash" class="headerlink" title="4.3哈希冲突和rehash"></a>4.3哈希冲突和rehash</h2><p>1、哈希冲突使用链表解决；<br>2、rehash时，新的哈希表大小size是第一个大于哈希表size的2的n次方。比如哈希表大小是5，那么新的哈希表大小就是8。并且rehash是渐进式的，字典中的删除、查找、更新都会在两个哈希表上操作，新增加的键值对则保存在新的哈希表h[1]中。随着rehash不断进行，最终原来的哈希表h[0]变成一张空表。这样是为了避免一次性rehash大量数据时，对Redis的性能有太大压力。</p>
-<h1 id="五、跳跃表"><a href="#五、跳跃表" class="headerlink" title="五、跳跃表"></a>五、跳跃表</h1><h1 id="六、整数集合"><a href="#六、整数集合" class="headerlink" title="六、整数集合"></a>六、整数集合</h1><h1 id="七、压缩列表"><a href="#七、压缩列表" class="headerlink" title="七、压缩列表"></a>七、压缩列表</h1><h1 id="八、对象"><a href="#八、对象" class="headerlink" title="八、对象"></a>八、对象</h1><p>介绍完Redis常用的数据结构之后，对象就可以正式登场啦。Redis的对象包括：字符串对象、列表对象、哈希对象、集合对象以及有序集合对象，每种对象至少用到了一种之前提到的数据结构。此外，Redis还支持指定对象的底层数据结构实现，以满足不同场景的需求。</p>
-<h2 id="8-1、对象类型与编码"><a href="#8-1、对象类型与编码" class="headerlink" title="8.1、对象类型与编码"></a>8.1、对象类型与编码</h2><p>Redis的每个对象由一个redisObject来表示，其中和保存数据相关的三个属性分别是type、encoding以及ptr属性。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef struct redisObject &#123;</span><br><span class="line">//类型</span><br><span class="line">unsigned type:4;</span><br><span class="line"></span><br><span class="line">//编码</span><br><span class="line">unsigned encoding:4;</span><br><span class="line"></span><br><span class="line">//指向底层实现数据结构的指针</span><br><span class="line">void *ptr;</span><br><span class="line">&#125; robj;</span><br></pre></td></tr></table></figure>
-<p>TYPE属性记录了对象的类型，的值以及TYPE命令的对应关系如下表。</p>
-<table>
-<thead>
-<tr>
-<th>对象</th>
-<th align="center">对象TYPE属性的值</th>
-<th align="right">TYPE命令的输出</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>字符串对象</td>
-<td align="center">REDIS_STRING</td>
-<td align="right">“string”</td>
-</tr>
-<tr>
-<td>列表对象</td>
-<td align="center">REDIS_LIST</td>
-<td align="right">“list”</td>
-</tr>
-<tr>
-<td>哈希对象</td>
-<td align="center">REDIS_HASH</td>
-<td align="right">“hash”</td>
-</tr>
-<tr>
-<td>集合对象</td>
-<td align="center">REDIS_SET</td>
-<td align="right">“set”</td>
-</tr>
-<tr>
-<td>有序集合对象</td>
-<td align="center">REDIS_ZSET</td>
-<td align="right">“zset”</td>
-</tr>
-</tbody></table>
-<p>encoding属性记录了对象使用的编码，ptr则指向对象底层的数据结构。而每种对象至少有两种不同的编码。</p>
-<table>
-<thead>
-<tr>
-<th>对象类型</th>
-<th align="center">编码</th>
-<th align="center">底层数据结构</th>
-<th align="right">OBJECT ENCODING命令输出</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>REDIS_STRING</td>
-<td align="center">REDIS_ENCODING_INT</td>
-<td align="center">整数</td>
-<td align="right">int</td>
-</tr>
-<tr>
-<td>REDIS_STRING</td>
-<td align="center">REDIS_ENCODING_EMBSTR</td>
-<td align="center">embstr编码的SDS</td>
-<td align="right">embsr</td>
-</tr>
-<tr>
-<td>REDIS_STRING</td>
-<td align="center">REDIS_ENCODING_RAW</td>
-<td align="center">SDS</td>
-<td align="right">raw</td>
-</tr>
-<tr>
-<td>REDIS_LIST</td>
-<td align="center">REDIS_ENCODING_ZIPLIST</td>
-<td align="center">压缩列表</td>
-<td align="right">ziplist</td>
-</tr>
-<tr>
-<td>REDIS_LIST</td>
-<td align="center">REDIS_ENCODING_LINKEDLIST</td>
-<td align="center">双端链表</td>
-<td align="right">linkedlist</td>
-</tr>
-<tr>
-<td>REDIS_HASH</td>
-<td align="center">REDIS_ENCODING_ZIPLIST</td>
-<td align="center">压缩列表</td>
-<td align="right">ziplist</td>
-</tr>
-<tr>
-<td>REDIS_HASH</td>
-<td align="center">REDIS_ENCODING_HT</td>
-<td align="center">字典</td>
-<td align="right">hashtable</td>
-</tr>
-<tr>
-<td>REDIS_SET</td>
-<td align="center">REDIS_ENCODING_INTSE</td>
-<td align="center">整数集合intset</td>
-<td align="right"></td>
-</tr>
-<tr>
-<td>REDIS_SET</td>
-<td align="center">REDIS_ENCODING_HT</td>
-<td align="center">字典</td>
-<td align="right">hashtable</td>
-</tr>
-<tr>
-<td>REDIS_ZSET</td>
-<td align="center">REDIS_ENCODING_ZIPLIST</td>
-<td align="center">压缩列表</td>
-<td align="right">ziplist</td>
-</tr>
-<tr>
-<td>REDIS_ZSET</td>
-<td align="center">REDIS_ENCODING_SKIPLIST</td>
-<td align="center">跳跃表+字典</td>
-<td align="right">skiplist</td>
-</tr>
-</tbody></table>
-<h2 id="8-2-字符串对象"><a href="#8-2-字符串对象" class="headerlink" title="8.2 字符串对象"></a>8.2 字符串对象</h2><p>字符串对象的编码包括int、raw以及embstr。  测试</p>
-
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Redis-Learning/" rel="tag"># Redis Learning</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2019/10/20/test-my-site/" rel="next" title="test_my_site">
-                <i class="fa fa-chevron-left"></i> test_my_site
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/11/13/LeetCode%E5%AD%A6%E4%B9%A0%E2%80%94%E2%80%9412-Integer-to-Roman/" rel="prev" title="LeetCode学习——12. Integer to Roman">
-                LeetCode学习——12. Integer to Roman <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-
-          
-
-  
-
-
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
-
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-            
-              <p class="site-author-name" itemprop="name">John Doe</p>
-              <p class="site-description motion-element" itemprop="description"></p>
-          </div>
-
-          <nav class="site-state motion-element">
-
-            
-              <div class="site-state-item site-state-posts">
-              
-                <a href="/archives/%20%7C%7C%20archive">
-              
-                  <span class="site-state-item-count">10</span>
-                  <span class="site-state-item-name">posts</span>
-                </a>
-              </div>
-            
-
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                
-                  <span class="site-state-item-count">6</span>
-                  <span class="site-state-item-name">tags</span>
-                
-              </div>
-            
-
-          </nav>
-
-          
-
-          
-
-          
-          
-
-          
-          
-
-          
-
-        </div>
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、Redis的五大对象"><span class="nav-number">1.</span> <span class="nav-text">一、Redis的五大对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Redis的底层数据结构"><span class="nav-number">2.</span> <span class="nav-text">二、Redis的底层数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单动态字符串"><span class="nav-number">2.1.</span> <span class="nav-text">简单动态字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-SDS的定义"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1 SDS的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-SDS的优点"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.2 SDS的优点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、链表"><span class="nav-number">3.</span> <span class="nav-text">三、链表</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-链表节点"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 链表节点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、字典"><span class="nav-number">4.</span> <span class="nav-text">四、字典</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-哈希表和字典"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 哈希表和字典</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-哈希算法"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 哈希算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3哈希冲突和rehash"><span class="nav-number">4.3.</span> <span class="nav-text">4.3哈希冲突和rehash</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、跳跃表"><span class="nav-number">5.</span> <span class="nav-text">五、跳跃表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、整数集合"><span class="nav-number">6.</span> <span class="nav-text">六、整数集合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、压缩列表"><span class="nav-number">7.</span> <span class="nav-text">七、压缩列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、对象"><span class="nav-number">8.</span> <span class="nav-text">八、对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1、对象类型与编码"><span class="nav-number">8.1.</span> <span class="nav-text">8.1、对象类型与编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-2-字符串对象"><span class="nav-number">8.2.</span> <span class="nav-text">8.2 字符串对象</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
-
-  
-</div>
-
-
-  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
-
-
-
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
-
-
-
-
-        
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
-    
-
-    
-
-  </div>
-
-  
-
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-  
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
-
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
-
-
-
-  
-
-
-  
-
-
-
-
-	
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  
-
-  
-
-  
-
-  
-
-</body>
-</html>
+extends includes/layout.pug
+
+block top_img
+  - var top_img = page.top_img || theme.post_meta.top_img || theme.top_img || config.top_img
+  if (top_img && page.top_img !== false)
+    - var bg_img = top_img !== true ? `background-image: url(${top_img})` : ''
+    - var flag = top_img === true ? 'no-bg' : ''
+    div#top-container(style=bg_img class=flag)
+      include ./includes/header.pug
+      #post-info
+        #post-title= page.title || _p('no_title')
+        #post-meta
+          if (theme.post_meta.date_type)
+            if (theme.post_meta.date_type === 'both')
+              time.post-meta__date
+                i.fa.fa-calendar(aria-hidden="true")
+                =' '+_p('post.created')+' '+date(page.date, config.date_format)
+                span.post-meta__separator |
+                i.fa.fa-calendar-check-o(aria-hidden="true")
+                =' '+_p('post.updated')+' '+date(page.updated, config.date_format)
+            else
+              - var date_type = theme.post_meta.date_type === 'updated' ? 'updated' : 'date'
+              time.post-meta__date #[i.fa.fa-calendar(aria-hidden="true")] #[=date(page[date_type], config.date_format)]
+          if (theme.post_meta.categories && page.categories.data.length > 0)
+            if (theme.post_meta.date_type)
+              span.post-meta__separator |
+            each item, index in page.categories.data
+              i.fa.fa-inbox.post-meta__icon(aria-hidden="true")
+              a(href=url_for(item.path)).post-meta__categories #[=item.name]
+              if (index < page.categories.data.length - 1)
+                 i.fa.fa-angle-right(aria-hidden="true")
+          if (theme.disqus.enable && theme.disqus.count)
+            if (theme.post_meta.date_type || theme.post_meta.categories && page.categories.data.length > 0)
+              span.post-meta__separator |
+            i.fa.fa-comment-o.post-meta__icon(aria-hidden="true")
+            a(href=url_for(page.path) + '#disqus_thread')
+              span.disqus-comment-count(data-disqus-identifier=page.path)
+          if (theme.wordcount && theme.wordcount.enable)
+            .post-meta-wordcount
+              span= _p('post.wordcount') + ': '
+              span.word-count= wordcount(page.content)
+              span.post-meta__separator |
+              span= _p('post.min2read', min2read(page.content, {cn: 350, en: 160}))
+  else
+    div#top-container.plain
+      include ./includes/header.pug
+
+block content
+  article#post(class="")
+    if (!top_img)
+      #post-title.plain= page.title || _p('no_title')
+      #post-meta
+        if (theme.post_meta.date_type)
+          - var date_type = theme.post_meta.date_type === 'updated' ? '' : 'date'
+          time.post-meta__date #[i.fa.fa-calendar(aria-hidden="true")] #[=date(page[date_type], config.date_format)]
+        if (theme.post_meta.categories && page.categories.data.length > 0)
+          if (theme.post_meta.date_type)
+            span.post-meta__separator |
+          each item, index in page.categories.data
+            i.fa.fa-inbox(aria-hidden="true")
+            a(href=url_for(item.path)).post-meta__categories  #[=item.name]
+            if (index < page.categories.data.length - 1)
+                i.fa.fa-angle-right.post-meta__separator(aria-hidden="true")
+        if (theme.disqus.enable && theme.disqus.count)
+          if (theme.post_meta.date_type || theme.post_meta.categories && page.categories.data.length > 0)
+            span.post-meta__separator |
+          i.fa.fa-comment-o(aria-hidden="true")
+          a(href=url_for(page.path) + '#disqus_thread')
+            span.disqus-comment-count(data-disqus-identifier=page.path)
+        if (theme.wordcount && theme.wordcount.enable)
+          span.post-meta__separator |
+          span.post-meta-wordcount
+            span= _p('post.wordcount') + ': '
+            span.word-count= wordcount(page.content)
+            span.post-meta__separator |
+            span= _p('post.min2read', min2read(page.content, {cn: 350, en: 160}))
+    #post-content.article-container!= page.content
+  if (theme.post_copyright && theme.post_copyright.enable)
+    .post-copyright
+      .post-copyright__author
+        span.post-copyright-meta= _p('post.copyright.author') + ": "
+        span.post-copyright-info
+          a(href=`mailto:${config.email}`) #[=config.author]
+      .post-copyright__type
+        span.post-copyright-meta= _p('post.copyright.link') + ": "
+        span.post-copyright-info
+          a(href=url_for(page.permalink)) #[=page.permalink]
+      .post-copyright__notice
+        span.post-copyright-meta= _p('post.copyright.copyright_notice') + ": "
+        span.post-copyright-info!= _p('post.copyright.copyright_content', theme.post_copyright.license_url, theme.post_copyright.license, config.url, config.title)
+  if (theme.post_meta.tags)
+    .post-meta__tag-list
+      each item, index in page.tags.data
+        a(href=url_for(item.path)).post-meta__tags #[=item.name]
+  if (theme.QR_code)
+    if (theme.QR_code.length > 0)
+      .post-qr-code
+        each item in theme.QR_code
+          .post-qr-code-item
+            img.post-qr-code__img(src=(item.itemlist||item).img)
+            .post-qr-code__desc=(item.itemlist||item).text
+  include includes/share/index.pug
+  include includes/pagination.pug
+  if (theme.adv && theme.adv.enable)
+    .post-adv!= theme.adv.info
+  if page.comments !== false
+    include includes/comments/index.pug

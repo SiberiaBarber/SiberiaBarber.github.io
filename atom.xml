@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://siberiabarber.github.io/"/>
-  <updated>2020-04-25T11:28:45.019Z</updated>
+  <updated>2020-04-25T11:37:50.605Z</updated>
   <id>https://siberiabarber.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>lock底层原理</title>
+    <link href="https://siberiabarber.github.io/2020/04/25/lock%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/"/>
+    <id>https://siberiabarber.github.io/2020/04/25/lock%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/</id>
+    <published>2020-04-25T11:35:29.000Z</published>
+    <updated>2020-04-25T11:37:50.605Z</updated>
+    
+    <content type="html"><![CDATA[<p>转载博客链接：<a href="https://yq.aliyun.com/articles/640868" target="_blank" rel="noopener">https://yq.aliyun.com/articles/640868</a> 和 <a href="https://blog.csdn.net/u011109589/article/details/80242931" target="_blank" rel="noopener">https://blog.csdn.net/u011109589/article/details/80242931</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;转载博客链接：&lt;a href=&quot;https://yq.aliyun.com/articles/640868&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://yq.aliyun.com/articles/640868&lt;/a&gt; 和 &lt;a href
+      
+    
+    </summary>
+    
+    
+    
+      <category term="多线程" scheme="https://siberiabarber.github.io/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
+    
+  </entry>
   
   <entry>
     <title>synchronized底层原理</title>
